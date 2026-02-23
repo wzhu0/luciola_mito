@@ -61,9 +61,9 @@ get_organelle_from_reads.py \\
     -t 2
 EOF
 
-    # echo "Submitting $sample ..."
-    # sbatch "$slurm_script"
+    echo "Submitting $sample ..."
+    sbatch "$slurm_script"
 
 done
 
-# echo "All jobs submitted."
+echo "All jobs submitted."

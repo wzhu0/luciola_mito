@@ -13,5 +13,5 @@ bash scripts/cp.reads.sh
 
 ### Run GetOrganelle assembly
 ```bash
-sbatch scripts/run_getOrganelle.slurm
+bash scripts/run_getOrganelle.sh
 ```

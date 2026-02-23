@@ -1,4 +1,4 @@
-SOURCE_DIR="/mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola/2025"
+SOURCE_DIR="/mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola"
 DEST_DIR="$HOME/luciola/mito/data"
 SAMPLE_LIST="$HOME/luciola/mito/utils/sample_list.txt"
 

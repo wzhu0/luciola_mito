@@ -22,7 +22,7 @@ get_organelle_from_reads.py \
     -R 10 \
     -k 21,45,65,85,105 \
     -F animal_mt \
-    -s utils/Luciola_lusitanica.gb \
+    -s utils/Luciola_lusitanica.fasta \
     --genes utils/Luciola_lusitanica.gb \
     -o getorganelle_out/GrPa-LuSpp-3-m-2020_pooled_105 \
     -t 2

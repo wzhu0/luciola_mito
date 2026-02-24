@@ -18,18 +18,3 @@ cp /mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola/2020/SwLa-LuSp
 cp /mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola/2020/SwLa-LuSpp-3-f-2020_pooled_82* ~/luciola/mito/data
 cp /mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola/2020/SwLa-LuSpp-17-f-2020_pooled_96* ~/luciola/mito/data
 cp /mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola/2020/SwLa-LuSpp-15-m-2020_pooled_94* ~/luciola/mito/data
-
-cp /mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola/2022/GrPal-LuNov-53-m-2022-14* ~/luciola/mito/data
-cp /mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola/2022/GrPal-LuNov-42-m-2022-3* ~/luciola/mito/data
-cp /mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola/2022/GrPal-LuNov-49-m-2022-10* ~/luciola/mito/data
-cp /mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola/2022/GrPal-LuNov-46-m-2022-7* ~/luciola/mito/data
-cp /mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola/2022/GrPal-LuNov-45-m-2022-6* ~/luciola/mito/data
-cp /mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola/2022/GrPal-LuNov-54-m-2022-15* ~/luciola/mito/data
-cp /mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola/2022/GrPal-LuNov-48-m-2022-9* ~/luciola/mito/data
-cp /mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola/2022/GrPal-LuNov-51-m-2022-12* ~/luciola/mito/data
-cp /mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola/2022/GrPal-LuNov-50-m-2022-11* ~/luciola/mito/data
-cp /mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola/2022/GrPal-LuNov-43-m-2022-4* ~/luciola/mito/data
-cp /mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola/2022/GrPal-LuNov-41-m-2022-2* ~/luciola/mito/data
-cp /mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola/2022/GrPal-LuNov-52-m-2022-13* ~/luciola/mito/data
-cp /mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola/2022/GrPal-LuNov-40-m-2022-1* ~/luciola/mito/data
-

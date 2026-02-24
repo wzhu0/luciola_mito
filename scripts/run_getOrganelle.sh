@@ -56,7 +56,7 @@ get_organelle_from_reads.py \\
     -k 21,45,65,85,105 \\
     -F animal_mt \\
     -s ${WORK_DIR}/utils/Luciola_lusitanica.fasta \\
-    --genes ${WORK_DIR}/utils/Luciola_lusitanica.gb \\
+    --genes ${WORK_DIR}/utils/Luciola_lusitanica.fasta \\
     -o ${OUT_DIR}/${sample} \\
     -t 2
 EOF

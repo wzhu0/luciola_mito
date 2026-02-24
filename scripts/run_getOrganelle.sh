@@ -23,7 +23,7 @@ find "$DATA_DIR" -maxdepth 1 -name "*_1_val_1*.fq.gz" | sort | while read -r r1;
     fi
 
     # skip if output already exists
-    if [[ -f "$OUT_DIR/$sample/get_org.log.txt" ]] && grep -q "Thanks for using GetOrganelle" "$OUT_DIR/$sample/get_org.log.txt" 2>/dev/null; then
+    if [[ -f "$OUT_DIR/$sample/get_org.log.txt" ]] && grep -q "Thank you!" "$OUT_DIR/$sample/get_org.log.txt" 2>/dev/null; then
         echo "SKIPPING $sample — already completed successfully"
         continue
     fi
@@ -34,7 +34,7 @@ find "$DATA_DIR" -maxdepth 1 -name "*_1_val_1*.fq.gz" | sort | while read -r r1;
 #!/bin/bash
 #SBATCH --partition=krypton
 #SBATCH --cpus-per-task=2
-#SBATCH --mem=16gb
+#SBATCH --mem=32gb
 #SBATCH --time=3-00:00:00
 #SBATCH --output=${LOG_DIR}/asm_${sample}.out
 ##SBATCH --mail-type=END,FAIL

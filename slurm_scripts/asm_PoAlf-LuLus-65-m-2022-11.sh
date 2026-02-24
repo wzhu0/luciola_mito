@@ -23,6 +23,6 @@ get_organelle_from_reads.py \
     -k 21,45,65,85,105 \
     -F animal_mt \
     -s /home/wzhu/luciola/mito/utils/Luciola_lusitanica.fasta \
-    --genes /home/wzhu/luciola/mito/utils/Luciola_lusitanica.gb \
+    --genes /home/wzhu/luciola/mito/utils/Luciola_lusitanica.fasta \
     -o /home/wzhu/luciola/mito/getorganelle_out/PoAlf-LuLus-65-m-2022-11 \
     -t 2

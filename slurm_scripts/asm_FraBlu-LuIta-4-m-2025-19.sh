@@ -23,6 +23,6 @@ get_organelle_from_reads.py \
     -k 21,45,65,85,105 \
     -F animal_mt \
     -s /home/wzhu/luciola/mito/utils/Luciola_lusitanica.fasta \
-    --genes /home/wzhu/luciola/mito/utils/Luciola_lusitanica.gb \
+    --genes /home/wzhu/luciola/mito/utils/Luciola_lusitanica.fasta \
     -o /home/wzhu/luciola/mito/getorganelle_out/FraBlu-LuIta-4-m-2025-19 \
     -t 2

@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --partition=krypton
 #SBATCH --cpus-per-task=2
-#SBATCH --mem=16gb
+#SBATCH --mem=32gb
 #SBATCH --time=3-00:00:00
 #SBATCH --output=/home/wzhu/luciola/mito/logs/asm_PoSes-LuLus-58-m-2022-4.out
 ##SBATCH --mail-type=END,FAIL
@@ -23,6 +23,6 @@ get_organelle_from_reads.py \
     -k 21,45,65,85,105 \
     -F animal_mt \
     -s /home/wzhu/luciola/mito/utils/Luciola_lusitanica.fasta \
-    --genes /home/wzhu/luciola/mito/utils/Luciola_lusitanica.gb \
+    --genes /home/wzhu/luciola/mito/utils/Luciola_lusitanica.fasta \
     -o /home/wzhu/luciola/mito/getorganelle_out/PoSes-LuLus-58-m-2022-4 \
     -t 2

@@ -1,24 +1,34 @@
+#!/bin/bash
+
 SOURCE_DIR="/mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola"
 DEST_DIR="$HOME/luciola/mito/data"
 SAMPLE_LIST="$HOME/luciola/mito/utils/sample_list.txt"
 
+mkdir -p "$DEST_DIR"
+
 while IFS= read -r line || [[ -n "$line" ]]; do
     # skip empty lines
     [[ -z "${line// }" ]] && continue
-    
-    sample_path="$SOURCE_DIR/${line#./}"
+
+    sample_path="$SOURCE_DIR/$line"
     sample_name=$(basename "$sample_path")
     subdir=$(dirname "$sample_path")
-    
+
     # find R1 and R2 — with or without .fixed
     r1=$(find "$subdir" -maxdepth 1 -name "${sample_name}_1_val_1*.fq.gz" | head -1)
     r2=$(find "$subdir" -maxdepth 1 -name "${sample_name}_2_val_2*.fq.gz" | head -1)
-    
+
     if [[ -z "$r1" || -z "$r2" ]]; then
         echo "WARNING: reads not found for $sample_name, skipping"
         continue
     fi
-    
+
+    # skip if already copied
+    if [[ -f "$DEST_DIR/$(basename $r1)" && -f "$DEST_DIR/$(basename $r2)" ]]; then
+        echo "SKIPPING $sample_name — already copied"
+        continue
+    fi
+
     echo "Copying $sample_name ..."
     cp "$r1" "$r2" "$DEST_DIR/"
 

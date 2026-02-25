@@ -1,34 +1,48 @@
 #!/bin/bash
 
-DATA_DIR="$HOME/luciola/mito/data"
 WORK_DIR="$HOME/luciola/mito"
+DATA_DIR="$WORK_DIR/data"
 LOG_DIR="$WORK_DIR/logs"
 OUT_DIR="$WORK_DIR/getorganelle_out"
 SLURM_DIR="$WORK_DIR/slurm_scripts"
+SAMPLE_LIST="$WORK_DIR/utils/sample_list.txt"
 
 mkdir -p "$LOG_DIR" "$OUT_DIR" "$SLURM_DIR"
 
-# find all R1 files, derive sample name from each
-find "$DATA_DIR" -maxdepth 1 -name "*_1_val_1*.fq.gz" | sort | while read -r r1; do
-    
-    # derive R2 and sample name
-    r2="${r1/_1_val_1/_2_val_2}"
-    filename=$(basename "$r1")
-    sample="${filename%%_1_val_1*}"  # strip everything from _1_val_1 onward
+while IFS= read -r line || [[ -n "$line" ]]; do
+    # skip empty lines
+    [[ -z "${line// }" ]] && continue
 
-    # check R2 exists
-    if [[ ! -f "$r2" ]]; then
-        echo "WARNING: R2 not found for $sample, skipping"
+    sample=$(basename "$line")
+
+    # determine suffix: .fixed if 2020 or pooled sample, otherwise not
+    if [[ "$line" == 2020/* || "$sample" == *pooled* ]]; then
+        r1="$DATA_DIR/${sample}_1_val_1.fixed.fq.gz"
+        r2="$DATA_DIR/${sample}_2_val_2.fixed.fq.gz"
+    else
+        r1="$DATA_DIR/${sample}_1_val_1.fq.gz"
+        r2="$DATA_DIR/${sample}_2_val_2.fq.gz"
+    fi
+
+    # check R1 and R2 exist
+    if [[ ! -f "$r1" || ! -f "$r2" ]]; then
+        echo "WARNING: reads not found for $sample, skipping"
         continue
     fi
 
-    # skip if output already exists
-    if [[ -f "$OUT_DIR/$sample/get_org.log.txt" ]] && grep -q "Thank you!" "$OUT_DIR/$sample/get_org.log.txt" 2>/dev/null; then
-        echo "SKIPPING $sample — already completed successfully"
+    # skip if already completed (circular or scaffold)
+    if grep -q "Thank you!" "$OUT_DIR/$sample/get_org.log.txt" 2>/dev/null; then
+        echo "SKIPPING $sample — already completed"
         continue
     fi
 
-    slurm_script="$SLURM_DIR/asm_${sample}.sh"
+    # skip if job is currently running or pending in SLURM (match by output log path)
+    if squeue -u "$USER" -o "%o" -h | grep -qF "asm_${sample}.out"; then
+        echo "SKIPPING $sample — job already in queue or running"
+        continue
+    fi
+
+    slurm_script="$SLURM_DIR/asm_${sample}.slurm"
 
     cat > "$slurm_script" <<EOF
 #!/bin/bash
@@ -64,6 +78,6 @@ EOF
     echo "Submitting $sample ..."
     sbatch "$slurm_script"
 
-done
+done < "$SAMPLE_LIST"
 
 echo "All jobs submitted."

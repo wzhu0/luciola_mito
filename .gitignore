@@ -1,4 +1,12 @@
-data/
+# raw reads
+00_raw_reads/
+
+# logs
 logs/
 
-getorganelle_out/
+# output dirs
+**/output/
+
+**/slurm_scripts/
+
+utils/mitos2_db/refseq63m/

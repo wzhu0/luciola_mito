@@ -10,3 +10,5 @@ logs/
 **/slurm_scripts/
 
 utils/mitos2_db/refseq63m/
+
+.DS_Store

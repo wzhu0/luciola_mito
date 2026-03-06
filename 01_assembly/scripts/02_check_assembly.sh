@@ -1,12 +1,14 @@
 #!/bin/bash
+# Summarise GetOrganelle assembly results for all samples
+# Usage: bash 01_assembly/scripts/02_check_assembly.sh
 
 WORK_DIR="$HOME/luciola/mito"
 OUT_DIR="$WORK_DIR/01_assembly/output"
 SAMPLE_LIST="$WORK_DIR/utils/sample_list.txt"
 
 # print header
-printf "%-45s %-12s %-10s %-10s\n" "SAMPLE" "STATUS" "LENGTH" "COVERAGE"
-printf "%-45s %-12s %-10s %-10s\n" "------" "------" "------" "--------"
+printf "%-45s %-20s %-10s %-10s\n" "SAMPLE" "STATUS" "LENGTH" "COVERAGE"
+printf "%-45s %-20s %-10s %-10s\n" "------" "------" "------" "--------"
 
 while IFS= read -r line || [[ -n "$line" ]]; do
     [[ -z "${line// }" ]] && continue
@@ -16,7 +18,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 
     # check if completed
     if ! grep -q "Thank you!" "$log" 2>/dev/null; then
-        printf "%-45s %-12s %-10s %-10s\n" "$sample" "INCOMPLETE" "N/A" "N/A"
+        printf "%-45s %-20s %-10s %-10s\n" "$sample" "INCOMPLETE" "N/A" "N/A"
         continue
     fi
 
@@ -50,6 +52,6 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         status="${status} (${npaths} paths)"
     fi
 
-    printf "%-45s %-12s %-10s %-10s\n" "$sample" "$status" "$length" "$coverage"
+    printf "%-45s %-20s %-10s %-10s\n" "$sample" "$status" "$length" "$coverage"
 
 done < "$SAMPLE_LIST"

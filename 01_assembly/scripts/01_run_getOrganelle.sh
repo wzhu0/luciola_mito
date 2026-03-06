@@ -1,7 +1,9 @@
 #!/bin/bash
+# Submit one SLURM job per sample for mitogenome assembly with GetOrganelle
+# Usage: bash 01_assembly/scripts/run_getOrganelle.sh
 
 WORK_DIR="$HOME/luciola/mito"
-DATA_DIR="$WORK_DIR/00_raw_reads"
+READS_DIR="$WORK_DIR/00_raw_reads"
 LOG_DIR="$WORK_DIR/logs"
 OUT_DIR="$WORK_DIR/01_assembly/output"
 SLURM_DIR="$WORK_DIR/01_assembly/slurm_scripts"
@@ -15,17 +17,12 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 
     sample=$(basename "$line")
 
-    # determine suffix: .fixed if 2020 or pooled sample, otherwise not
-    if [[ "$line" == 2020/* || "$sample" == *pooled* ]]; then
-        r1="$DATA_DIR/${sample}_1_val_1.fixed.fq.gz"
-        r2="$DATA_DIR/${sample}_2_val_2.fixed.fq.gz"
-    else
-        r1="$DATA_DIR/${sample}_1_val_1.fq.gz"
-        r2="$DATA_DIR/${sample}_2_val_2.fq.gz"
-    fi
+    # find reads
+    r1=$(find "$READS_DIR" -maxdepth 1 -name "${sample}_1_val_1*.fq.gz" | head -1)
+    r2=$(find "$READS_DIR" -maxdepth 1 -name "${sample}_2_val_2*.fq.gz" | head -1)
 
     # check R1 and R2 exist
-    if [[ ! -f "$r1" || ! -f "$r2" ]]; then
+    if [[ -z "$r1" || -z "$r2" ]]; then
         echo "WARNING: reads not found for $sample, skipping"
         continue
     fi
@@ -36,7 +33,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         continue
     fi
 
-    # skip if job is currently running or pending in SLURM (match by output log path)
+    # skip if job is currently running or pending
     if squeue -u "$USER" -o "%o" -h | grep -qF "asm_${sample}.out"; then
         echo "SKIPPING $sample — job already in queue or running"
         continue
@@ -51,8 +48,6 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 #SBATCH --mem=32gb
 #SBATCH --time=3-00:00:00
 #SBATCH --output=${LOG_DIR}/asm_${sample}.out
-##SBATCH --mail-type=END,FAIL
-##SBATCH --mail-user=wenjie.zhu@lmu.de
 #SBATCH --qos=normal_prio
 #SBATCH -D ${WORK_DIR}
 #SBATCH -J asm_${sample}

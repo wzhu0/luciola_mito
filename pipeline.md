@@ -15,6 +15,8 @@ Phylogenetic inference of *Luciola* fireflies from whole mitogenomes across 11 p
 
 
 ## Step 00: Copy raw reads
+Run step 00 and step 01 in batches if home directory space is limited.
+
 ```bash
 # Change the utils/sample_list.txt file to copy files you need
 # Run on login node inside a screen session
@@ -22,6 +24,9 @@ screen -S cp_reads
 bash utils/cp_reads.sh
 # detach with Ctrl+A D, reattach with: screen -r cp_reads
 ```
+
+## Step 01: Mitogenome assembly
+
 ### GetOrganelle Installation & Initialization
 ```bash
 conda create -n getorganelle -c bioconda -c conda-forge getorganelle bowtie2
@@ -30,7 +35,25 @@ conda activate getorganelle
 get_organelle_config.py --add animal_mt
 ```
 
-### Run GetOrganelle assembly
+### Run assembly
 ```bash
-bash scripts/run_getOrganelle.sh
+mkdir logs
+bash 01_assembly/scripts/01_run_getOrganelle.sh
+```
+
+### Check results
+```bash
+bash 01_assembly/scripts/02_check_assembly.sh
+```
+
+All samples should show `circular genome` or `1 scaffold(s)` with length ~16,000–17,000 bp.
+A circular genome is ideal. A scaffold of ~16,000+ bp is typically missing only the control region and is usually fine for downstream analysis.
+Samples marked `INCOMPLETE` need manual inspection.
+
+### Collect assemblies
+
+Once all samples are complete, copy final assemblies to `01_assembly/assemblies/`
+
+```bash
+bash 01_assembly/scripts/03_collect_assemblies.sh
 ```

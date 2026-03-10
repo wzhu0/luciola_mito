@@ -1,8 +1,10 @@
 #!/bin/bash
+# Mitogenome annotation with MITOS2
+# Usage: bash 02_annotation/scripts/01_run_mitos2.sh
 
 WORK_DIR="$HOME/luciola/mito"
 ASSEMBLY_DIR="$WORK_DIR/01_assembly/assemblies"
-OUT_DIR="$WORK_DIR/02_annotation/output/mitos2"
+OUT_DIR="$WORK_DIR/02_annotation/output"
 LOG_DIR="$WORK_DIR/logs"
 SLURM_DIR="$WORK_DIR/02_annotation/slurm_scripts"
 SAMPLE_LIST="$WORK_DIR/utils/sample_list.txt"
@@ -18,7 +20,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     fasta="$ASSEMBLY_DIR/${sample}.fasta"
 
     if [[ ! -f "$fasta" ]]; then
-        echo "WARNING: fasta not found for $sample, skipping"
+        echo "MISSING  $sample — fasta not found, skipping"
         continue
     fi
 
@@ -36,15 +38,13 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 
     slurm_script="$SLURM_DIR/mitos2_${sample}.slurm"
 
-    cat > "$slurm_script" <<EOF
+    cat > "$slurm_script" << EOF
 #!/bin/bash
 #SBATCH --partition=krypton
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=8gb
 #SBATCH --time=1:00:00
 #SBATCH --output=${LOG_DIR}/mitos2_${sample}.out
-##SBATCH --mail-type=END,FAIL
-##SBATCH --mail-user=wenjie.zhu@lmu.de
 #SBATCH --qos=normal_prio
 #SBATCH -D ${WORK_DIR}
 #SBATCH -J mt2_${sample}

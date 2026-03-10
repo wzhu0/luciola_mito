@@ -88,3 +88,5 @@ Check gene counts and assembly statistics for all samples:
 ```bash
 bash 02_annotation/scripts/02_mito_curation_qc.sh
 ```
+
+check annotation quality `02_annotation/curation_qc.tsv` 

@@ -2,7 +2,7 @@
 
 # Overview
 
-Phylogenetic inference of *Luciola* fireflies from whole mitogenomes across 11 populations, using 13 protein-coding genes + 2 rRNA genes.
+Phylogenetic inference of *Luciola* fireflies from whole mitogenomes across 12 populations, using 13 protein-coding genes + 2 rRNA genes.
 
 | Step | Directory | Description |
 |------|-----------|-------------|
@@ -13,6 +13,19 @@ Phylogenetic inference of *Luciola* fireflies from whole mitogenomes across 11 p
 | 04 | `04_revbayes/` | Time-calibrated Bayesian inference (RevBayes) |
 | 05 | `05_iqtree/` | Concatenated and partitioned ML tree (IQ-TREE) |
 
+## Sample information
+We have 122 DNAseq samples and 12 RNAseq samples. This pipeline covers the DNAseq
+samples only. A different pipeline might be needed for RNAseq samples.
+
+DNAseq reads: `/mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola/{2020,2022,2025}/`
+RNAseq reads: `/mnt/netvolumes/srva229/bayes/hpc_exchange/wzhu/data_luciola/RNASeq/`
+
+**RNAseq samples**
+Each RNAseq sample has two tissue libraries (head and body) that need to be combined
+before assembly.
+Mitochondrial transcript levels vary greatly across genes which might make GetOrganelle struggle.
+
+Worth checking [MITGARD](https://github.com/pedronachtigall/MITGARD) -- a reference-guided assembly tool to recover the mitochondrial genome from RNA-seq data of any Eukaryote species.
 
 ## Step 00: Copy raw reads
 Run step 00 and step 01 in batches if home directory space is limited.

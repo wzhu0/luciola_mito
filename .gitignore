@@ -12,3 +12,7 @@ logs/
 utils/mitos2_db/refseq63m/
 
 .DS_Store
+
+# others
+utils/finished.txt
+utils/todo_list.txt

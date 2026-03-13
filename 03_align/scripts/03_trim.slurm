@@ -3,14 +3,14 @@
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=4gb
 #SBATCH --time=0:30:00
-#SBATCH --output=/home/wzhu/luciola/mito/logs/03_trim.out
+#SBATCH --output=/home/wzhu/luciola/mito/logs/03_align_trim.out
 #SBATCH --qos=normal_prio
 #SBATCH -D /home/wzhu/luciola/mito
 #SBATCH -J mito_trimal
 
 # Step 3: Trim all 15 alignments with trimAl automated1
-# Run after both 02_align_pcg.sh and 02_align_rrna.sh are complete
-# Submit as: sbatch 03_align/scripts/03_trim.sh
+# Run after both 02_align_pcg.slurm and 02_align_rrna.slurm are complete
+# Submit as: sbatch 03_align/scripts/03_trim.slurm
 
 set -euo pipefail
 
@@ -31,7 +31,7 @@ RRNA_GENES=(rrnS rrnL)
 for gene in "${PCG_GENES[@]}"; do
     IN="${ALIGN_DIR}/${gene}_NT.fasta"
     if [[ ! -f "$IN" ]]; then
-        echo "ERROR: ${IN} not found. Run 02_align_pcg.sh first."
+        echo "ERROR: ${IN} not found. Run 02_align_pcg.slurm first."
         exit 1
     fi
     echo "trimAl: ${gene}"
@@ -43,7 +43,7 @@ done
 for gene in "${RRNA_GENES[@]}"; do
     IN="${ALIGN_DIR}/${gene}.fasta"
     if [[ ! -f "$IN" ]]; then
-        echo "ERROR: ${IN} not found. Run 02_align_rrna.sh first."
+        echo "ERROR: ${IN} not found. Run 02_align_rrna.slurm first."
         exit 1
     fi
     echo "trimAl: ${gene}"

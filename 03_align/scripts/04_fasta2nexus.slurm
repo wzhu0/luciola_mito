@@ -3,7 +3,7 @@
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=4gb
 #SBATCH --time=0:30:00
-#SBATCH --output=/home/wzhu/luciola/mito/logs/04_fasta2nexus.out
+#SBATCH --output=/home/wzhu/luciola/mito/logs/03_align_fasta2nexus.out
 #SBATCH --qos=normal_prio
 #SBATCH -D /home/wzhu/luciola/mito
 #SBATCH -J mito_fasta2nex
@@ -14,7 +14,7 @@ module load gnu/12
 module load prebin/kry
 
 TRIM_DIR="03_align/03_trimmed"
-NEX_DIR="04_revbayes/data"
+NEX_DIR="05_revbayes/data"
 
 mkdir -p "${NEX_DIR}" logs
 

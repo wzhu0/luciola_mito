@@ -10,8 +10,8 @@
 
 # Step 4: Concatenate trimmed alignments and run IQ-TREE
 # Produces an unrooted ML tree with UFBoot support values
-# Run after 03_trim.sh is complete
-# Submit as: sbatch 04_iqtree/scripts/run_iqtree.slurm
+# Run after 03_align/scripts/03_trim.sh is complete
+# Usage: sbatch 04_iqtree/scripts/run_iqtree.slurm
 
 module load gnu/12
 module load prebin/kry
@@ -26,9 +26,7 @@ PCG_GENES=(nad1 nad2 nad3 nad4 nad4l nad5 nad6 cox1 cox2 cox3 atp6 atp8 cob)
 RRNA_GENES=(rrnS rrnL)
 ALL_GENES=("${PCG_GENES[@]}" "${RRNA_GENES[@]}")
 
-# ── Step 1: Concatenate all 15 alignments into one FASTA ─────────────────────
-echo "Concatenating alignments..."
-
+# Step 1: Concatenate all 15 alignments into one FASTA
 python3 << EOF
 import os
 
@@ -72,8 +70,7 @@ with open(os.path.join(data_dir, "gene_lengths.txt"), "w") as out:
         out.write(f"{gene}\t{len(seqs[0])}\n")
 EOF
 
-# ── Step 2: Write partition file for IQ-TREE ─────────────────────────────────
-echo "Writing partition file..."
+# Step 2: Write partition file for IQ-TREE 
 PART_FILE="${DATA_DIR}/partitions.txt"
 > "$PART_FILE"
 
@@ -93,13 +90,8 @@ while IFS=$'\t' read -r gene len; do
     POS=$(( END + 1 ))
 done < "${DATA_DIR}/gene_lengths.txt"
 
-echo "Partition file written: ${PART_FILE}"
-echo "Total concatenated length: $((POS - 1)) bp"
 
-# ── Step 3: Run IQ-TREE ───────────────────────────────────────────────────────
-echo ""
-echo "Running IQ-TREE..."
-
+# Step 3: Run IQ-TREE
 iqtree2 \
     -s  "${DATA_DIR}/concat.fasta" \
     -p  "${PART_FILE}" \
@@ -108,7 +100,3 @@ iqtree2 \
     --redo \
     -T  ${SLURM_CPUS_PER_TASK} \
     --prefix "${OUT_DIR}/luciola_mito"
-
-echo ""
-echo "IQ-TREE complete."
-echo "Tree file: ${OUT_DIR}/luciola_mito.treefile"

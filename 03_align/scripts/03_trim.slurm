@@ -18,7 +18,6 @@ module load gnu/12
 module load prebin/kry
 module load trimal/1.5.1
 
-# ── Paths ─────────────────────────────────────────────────────────────────────
 ALIGN_DIR="03_align/02_aligned"
 TRIM_DIR="03_align/03_trimmed"
 
@@ -27,7 +26,7 @@ mkdir -p "${TRIM_DIR}" logs
 PCG_GENES=(nad1 nad2 nad3 nad4 nad4l nad5 nad6 cox1 cox2 cox3 atp6 atp8 cob)
 RRNA_GENES=(rrnS rrnL)
 
-# ── Trim PCGs (input is _NT.fasta from MACSE) ─────────────────────────────────
+# Trim PCGs (input is _NT.fasta from MACSE)
 for gene in "${PCG_GENES[@]}"; do
     IN="${ALIGN_DIR}/${gene}_NT.fasta"
     if [[ ! -f "$IN" ]]; then
@@ -39,7 +38,7 @@ for gene in "${PCG_GENES[@]}"; do
         2> "${TRIM_DIR}/${gene}_trimal.log"
 done
 
-# ── Trim rRNAs ────────────────────────────────────────────────────────────────
+# Trim rRNAs 
 for gene in "${RRNA_GENES[@]}"; do
     IN="${ALIGN_DIR}/${gene}.fasta"
     if [[ ! -f "$IN" ]]; then
@@ -51,7 +50,7 @@ for gene in "${RRNA_GENES[@]}"; do
         2> "${TRIM_DIR}/${gene}_trimal.log"
 done
 
-# ── Summary ───────────────────────────────────────────────────────────────────
+# Summary
 echo ""
 echo "=== Trimmed alignment summary ==="
 printf "%-10s | %14s | %s\n" "Gene" "Trimmed length" "Sequences"

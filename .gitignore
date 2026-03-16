@@ -5,7 +5,7 @@
 logs/
 
 # output dirs
-**/output/
+**/output/*
 
 **/slurm_scripts/
 
@@ -16,3 +16,6 @@ utils/mitos2_db/refseq63m/
 # others
 utils/finished.txt
 utils/todo_list.txt
+
+# unignore
+!04_iqtree/output/luciola_mito.treefile

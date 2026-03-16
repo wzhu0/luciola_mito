@@ -1,0 +1,15 @@
+nad1	921
+nad2	975
+nad3	354
+nad4	1329
+nad4l	291
+nad5	1725
+nad6	504
+cox1	1545
+cox2	714
+cox3	787
+atp6	672
+atp8	144
+cob	1134
+rrnS	745
+rrnL	1247

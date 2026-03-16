@@ -183,6 +183,75 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 
 done < "$SAMPLE_LIST"
 
+# Post-extraction reading frame corrections 
+# Some PCGs are mis-annotated by MITOS2, resulting in extracted lengths not
+# divisible by 3. We correct by trimming from the 3' end to the nearest codon
+# boundary (len - len%3). This is safe only because we verified via translation
+# testing that offset=0 is correct for all affected genes — i.e. the 5' start
+# is correct and only the 3' end has 1 extra bp
+#
+# Known affected genes in this dataset:
+#   cox3: all samples annotated as 787 bp (mod3=1), correct length 786 bp
+#   nad4: MoDo/AlVe samples annotated as 1339 bp (mod3=1), correct 1338 bp
+#
+# The correction trims any sequence where len%3 != 0 down to len - (len%3).
+# A WARNING is printed if more than 1 bp needs to be trimmed
+#
+# NOTE: if new samples are added, rerun the mod3 check and translation test:
+#   bash 03_align/scripts/01a_check_extracted.sh
+
+
+python3 << PYEOF
+import os
+
+extract_dir = "${EXTRACT_DIR}"
+pcg_genes = "${PCG_GENES[*]}".split()
+
+for gene in pcg_genes:
+    fa = os.path.join(extract_dir, gene + ".fasta")
+    records = []
+    name = None
+    seq = ""
+    with open(fa) as f:
+        for line in f:
+            line = line.rstrip()
+            if line.startswith(">"):
+                if name is not None:
+                    records.append((name, seq))
+                name = line[1:]
+                seq = ""
+            else:
+                seq += line
+        if name is not None:
+            records.append((name, seq))
+
+    n_fixed = 0
+    warnings = []
+    fixed_records = []
+    for name, seq in records:
+        remainder = len(seq) % 3
+        if remainder != 0:
+            if remainder > 1:
+                warnings.append(f"  WARNING: {gene} {name}: trimming {remainder} bp "
+                                f"(length {len(seq)}) — investigate manually")
+            seq = seq[:len(seq) - remainder]
+            n_fixed += 1
+        fixed_records.append((name, seq))
+
+    if n_fixed > 0:
+        with open(fa, "w") as out:
+            for name, seq in fixed_records:
+                out.write(f">{name}
+{seq}
+")
+        print(f"  {gene}: trimmed {n_fixed} sequence(s) to nearest codon boundary")
+        for w in warnings:
+            print(w)
+    else:
+        print(f"  {gene}: OK (no correction needed)")
+PYEOF
+
+
 echo ""
 echo "=== Extraction summary ==="
 TOTAL=$(awk 'NF' "$SAMPLE_LIST" | wc -l)

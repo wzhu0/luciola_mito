@@ -172,8 +172,8 @@ Recommended to do eye inspection with AliView as well.
 sbatch 03_align/scripts/03_trim.slurm
 ```
 
-Uses `trimAl -automated1` for all 15 genes. This removes gap-rich columns while retaining informative variation. 
-
+PCGs are trimmed with `trimAl -automated1 --block 3`. The `--block 3` flag forces trimAl to remove columns in multiples of 3, preserving the codon reading frame throughout the trimmed alignment.
+rRNAs are trimmed with `trimAl -automated1` only (no codon structure).
 Recommended to do another round of eye inspection.
 
 ### 03e: Convert to NEXUS (for RevBayes)

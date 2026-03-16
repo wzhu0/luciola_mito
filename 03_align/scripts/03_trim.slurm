@@ -27,6 +27,7 @@ PCG_GENES=(nad1 nad2 nad3 nad4 nad4l nad5 nad6 cox1 cox2 cox3 atp6 atp8 cob)
 RRNA_GENES=(rrnS rrnL)
 
 # Trim PCGs (input is _NT.fasta from MACSE)
+# codon reading frame aware trimming
 for gene in "${PCG_GENES[@]}"; do
     IN="${ALIGN_DIR}/${gene}_NT.fasta"
     if [[ ! -f "$IN" ]]; then
@@ -34,7 +35,7 @@ for gene in "${PCG_GENES[@]}"; do
         exit 1
     fi
     echo "trimAl: ${gene}"
-    trimal -in "$IN" -out "${TRIM_DIR}/${gene}.fasta" -automated1 \
+    trimal -in "$IN" -out "${TRIM_DIR}/${gene}.fasta" -automated1 --block 3 \
         2> "${TRIM_DIR}/${gene}_trimal.log"
 done
 

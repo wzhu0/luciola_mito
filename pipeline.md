@@ -210,3 +210,6 @@ The key file is `04_iqtree/output/luciola_mito.treefile`.
 
 ## Step 05: Time-calibrated phylogeny (RevBayes)
 
+```bash
+sbatch 05_revbayes/scripts/run_revbayes_timetree.slurm
+```

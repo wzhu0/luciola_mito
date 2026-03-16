@@ -1,0 +1,14 @@
+################################################################################
+#
+# RevBayes Script: Strict clock model.
+#
+# authors: Sebastian Hoehna
+#
+################################################################################
+
+clock_rates ~ dnUniform(0,10)
+clock_rates.setValue( 1E-2 )
+
+moves.append( mvScale(clock_rates, weight=3) )
+
+up_down_clock_tree.addVariable( clock_rates, up=TRUE )

@@ -1,0 +1,14 @@
+################################################################################
+#
+# RevBayes Script: Strict clock model with fixed mutation rate.
+#
+# authors: Wenjie Zhu
+#
+################################################################################
+
+###############
+# Clock model #
+###############
+
+# strict clock with fixed rate
+clock_rate <- CLOCK_RATE

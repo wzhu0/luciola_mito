@@ -1,0 +1,37 @@
+################################################################################
+#
+# RevBayes Script: Uniform time tree prior with uniform root age.
+#
+# Time unit: kyr
+#
+# authors: Wenjie Zhu
+#
+################################################################################
+
+##############
+# Tree model #
+##############
+
+root_age ~ dnUniform(0, 50000)
+root_age.setValue(24500)
+
+moves.append( mvScaleBactrian(root_age, lambda=0.01, weight=1.0, tuneTarget=0.44) )
+moves.append( mvScaleBactrian(root_age, lambda=1,    weight=1.0, tuneTarget=0.10) )
+moves.append( mvScaleBactrian(root_age, lambda=0.1,  weight=1.0, tuneTarget=0.01) )
+
+# UPGMA as starting tree
+starting_tree = UPGMA(data_all)
+starting_tree.rescale( root_age / starting_tree.rootAge() )
+
+phylogeny ~ dnUniformTimeTree(rootAge=root_age, taxa=taxa)
+phylogeny.setValue(starting_tree)
+
+
+moves.append( mvNNI(phylogeny,              weight=num_taxa) )
+moves.append( mvNarrow(phylogeny,           weight=num_taxa) )
+moves.append( mvFNPR(phylogeny,             weight=num_taxa) )
+moves.append( mvGPR(phylogeny,              weight=5) )
+moves.append( mvNodeTimeSlideUniform(phylogeny, weight=num_taxa) )
+
+up_down_clock_tree.addVariable( root_age,  up=TRUE )
+up_down_clock_tree.addVariable( phylogeny, up=FALSE )

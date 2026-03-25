@@ -1,11 +1,10 @@
 ################################################################################
 #
-# RevBayes Script: GTR+Gamma substitution model for a nucleotide single gene.
+# RevBayes Script: GTR+Gamma+I substitution model, one per partition.
 #
-# authors: Sebastian Hoehna
+# authors: Wenjie Zhu  (adapted from Sebastian Hoehna)
 #
 ################################################################################
-
 
 ######################
 # Substitution Model #
@@ -14,21 +13,21 @@
 for ( i in 1:NUM_PARTS ) {
 
   # specify the stationary frequency parameters
-  pi_prior[i] <- v(1,1,1,1)
-  pi[i] ~ dnDirichlet(pi_prior[i])
-  moves.append( mvBetaSimplex(pi[i], weight=2.0) )
-  moves.append( mvDirichletSimplex(pi[i], weight=1.0) )
+    pi_prior[i] <- v(1,1,1,1)
+    pi[i] ~ dnDirichlet(pi_prior[i])
+    moves.append( mvBetaSimplex(pi[i],      weight=2.0) )
+    moves.append( mvDirichletSimplex(pi[i], weight=1.0) )
 
 
   # specify the exchangeability rate parameters
-  er_prior[i] <- v(1,1,1,1,1,1)
-  er[i] ~ dnDirichlet(er_prior[i])
-  moves.append( mvBetaSimplex(er[i], weight=3.0) )
-  moves.append( mvDirichletSimplex(er[i], weight=1.5) )
+    er_prior[i] <- v(1,1,1,1,1,1)
+    er[i] ~ dnDirichlet(er_prior[i])
+    moves.append( mvBetaSimplex(er[i],      weight=3.0) )
+    moves.append( mvDirichletSimplex(er[i], weight=1.5) )
 
 
-  # create a deterministic variable for the rate matrix, GTR
-  Q[i] := fnGTR(er[i],pi[i])
+    # GTR rate matrix
+    Q[i] := fnGTR(er[i], pi[i])
 
 
   #############################

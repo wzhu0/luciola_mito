@@ -1,0 +1,63 @@
+################################################################################
+#
+# RevBayes Script: Read mitochondrial data for timetree inference.
+#
+# Partitioning scheme:
+#   - 13 protein-coding genes split by codon position
+#   - 2 rRNA genes (rrnL, rrnS) concatenated
+#
+# authors: Wenjie Zhu
+#
+################################################################################
+
+PCG_GENES = ["atp6", "atp8", "cob", "cox1", "cox2", "cox3",
+             "nad1", "nad2", "nad3", "nad4", "nad4l", "nad5", "nad6"]
+
+RRNA_GENES = ["rrnL", "rrnS"]
+
+
+for ( i in 1:PCG_GENES.size() ) {
+
+    gene_data = readDiscreteCharacterData("data/" + PCG_GENES[i] + ".nex")
+
+    cp1 = gene_data
+    cp2 = gene_data
+    cp3 = gene_data
+    cp1.setCodonPartition(1)
+    cp2.setCodonPartition(2)
+    cp3.setCodonPartition(3)
+
+    pcg_cp1[i] = cp1
+    pcg_cp2[i] = cp2
+    pcg_cp3[i] = cp3
+
+}
+
+# partition1-3: pcg by codon position
+data[1] = concatenate( pcg_cp1, merge="union" ) 
+data[2] = concatenate( pcg_cp2, merge="union" ) 
+data[3] = concatenate( pcg_cp3, merge="union" ) 
+
+for ( i in 1:RRNA_GENES.size() ) {
+    rrna[i] = readDiscreteCharacterData("data/" + RRNA_GENES[i] + ".nex")
+}
+
+# partition4: rrna
+data[4] = concatenate( rrna, merge="union" )
+
+
+data_all = concatenate( data, merge="union" )
+all_taxa  = data_all.taxa()
+
+for ( i in 1:data.size() ) {
+    data[i].addMissingTaxa( all_taxa )
+}
+
+
+# Get some useful variables from the data. We need these later on.
+num_taxa  <- data[1].ntaxa()
+taxa      <- data[1].taxa()
+NUM_PARTS = data.size()
+
+"Partitions : " + NUM_PARTS
+"#Taxa       : " + num_taxa

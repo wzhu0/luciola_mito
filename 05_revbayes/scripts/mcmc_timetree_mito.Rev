@@ -1,0 +1,101 @@
+################################################################################
+#
+# RevBayes Script: Time-calibrated Bayesian phylogenetic inference from
+#                  mitochondrial genomes (15 genes).
+#
+# Partition : 4 (by codon position and gene type)
+# Clock     : strict, fixed mutation rate
+# Tree prior: uniform time tree with uniform root age
+#
+# authors: Wenjie Zhu, Sebastian Hoehna
+#
+################################################################################
+
+setOption("useScaling", "true")
+setOption("scalingDensity", "10")
+
+# NUM_RUNS      = args[1]
+# NUM_MCMC_ITER = args[2]
+NUM_RUNS      = 2
+NUM_MCMC_ITER = 100000
+CLOCK_RATE <- 0.0134 / 1000.0  # insect clock rate
+CLOCK_RATE <- 0.005 / 1000.0   # partition only by codon (Ask Sebastian for more accurate rate)
+
+
+###########################
+#  Read data              #
+###########################
+
+source("scripts/read_data_mito.Rev")
+
+moves    = VectorMoves()
+monitors = VectorMonitors()
+
+up_down_clock_tree = mvUpDownScale(weight=2)
+
+
+######################
+# Substitution Model #
+######################
+
+source("scripts/substitution_model_mito.Rev")
+
+
+###############
+# Clock model #
+###############
+
+source("scripts/clock_model_strict_mito.Rev")
+
+
+##############
+# Tree model #
+##############
+
+source("scripts/tree_model_mito.Rev")
+
+
+###################
+# PhyloCTMC Model #
+###################
+
+for ( i in 1:NUM_PARTS ) {
+
+    sequences[i] ~ dnPhyloCTMC(
+        tree        = phylogeny,
+        Q           = Q[i],
+        siteRates   = sr[i],
+        pInv        = p_inv[i],
+        branchRates = clock_rate,
+        type        = "DNA"
+    )
+    sequences[i].clamp( data[i] )
+
+}
+
+
+############
+# Analysis #
+############
+
+moves.append( up_down_clock_tree )
+
+mymodel = model(phylogeny)
+
+# monitors
+monitors.append( mnScreen(printgen=100, root_age) )
+monitors.append( mnModel(filename = "output/Luciola_mito_timetree.log", printgen = 10))
+monitors.append( mnFile(phylogeny, filename = "output/Luciola_mito_timetree.trees", printgen = 10))
+
+# run the MCMC
+mymcmc = mcmc(mymodel, moves, monitors, nruns=NUM_RUNS, combine="mixed")
+mymcmc.run(generations=NUM_MCMC_ITER, tuningInterval=100)
+
+mymcmc.operatorSummary()
+
+# computing the maximum a posteriori tree
+
+trace = readTreeTrace("output/Luciola_mito_timetree.trees", treetype="clock", burnin= 0.2)
+mapTree(trace, file="output/Luciola_mito_timetree_MAP.tree" )
+
+q()

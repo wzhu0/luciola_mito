@@ -1,0 +1,60 @@
+source("mito_scripts/read_data_mito.Rev")
+q()
+source("mito_scripts/read_data_mito.Rev")
+data
+data[1]
+data[2]
+data[3]
+data[4]
+i=1
+a = readDiscreteCharacterData("data/" + PCG_GENES[i] + ".nex")
+a
+i=13
+b = readDiscreteCharacterData("data/" + PCG_GENES[i] + ".nex")
+b
+D             = distanceMatrix(data[1])
+?U
+fnUPGMA(data[1])
+UPGMA(data[1])
+starting_tree = UPGMA(data[1])
+starting_tree.methods()
+starting_tree.rootAge()
+starting_tree.rescale(23000/starting_tree.rootAge())
+starting_tree.rootAge()
+?dnUniformTimeTree
+q()
+setOption("useScaling", "true")
+setOption("scalingDensity", "10")
+NUM_RUNS      = args[1]
+NUM_RUNS      = 2
+NUM_MCMC_ITER = 10000
+CLOCK_RATE <- 0.0134 / 1000.0
+source("scripts/read_data_mito.Rev")
+moves    = VectorMoves()
+monitors = VectorMonitors()
+up_down_clock_tree = mvUpDownScale(weight=2)
+source("scripts/substitution_model_mito.Rev")
+source("scripts/clock_model_strict_mito.Rev")
+source("scripts/tree_model_mito.Rev")
+for ( i in 1:NUM_PARTS ) {
+sequences[i] ~ dnPhyloCTMC(
+tree        = phylogeny,
+Q           = Q[i],
+siteRates   = sr[i],
+pInv        = p_inv[i],
+branchRates = clock_rate,
+type        = "DNA"
+)
+sequences[i].clamp( data[i] )
+}
+moves.append( up_down_clock_tree )
+mymodel = model(phylogeny)
+monitors.append( mnScreen(printgen=100, root_age) )
+monitors.append( mnModel(filename = "output/Luciola_mito_timetree.log", printgen = 10))
+monitors.append( mnFile(phylogeny, filename = "output/Luciola_mito_timetree.trees", printgen = 10))
+mymcmc = mcmc(mymodel, moves, monitors, nruns=NUM_RUNS, combine="mixed")
+mymcmc.run(generations=NUM_MCMC_ITER, tuningInterval=100)
+mymcmc.operatorSummary()
+trace = readTreeTrace("output/Luciola_mito_timetree.trees", treetype="clock", burnin= 0.2)
+mapTree(trace, file="outpu/Luciola_mito_timetree_MAP.tree" )
+q()

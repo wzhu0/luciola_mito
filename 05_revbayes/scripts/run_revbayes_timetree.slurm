@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --partition=krypton
 #SBATCH --cpus-per-task=2
-#SBATCH --ntasks=2
-#SBATCH --mem=2gb
+#SBATCH --ntasks=4
+#SBATCH --mem=16gb
 #SBATCH --output=/home/wzhu/luciola/mito/logs/revbayes_timetree.out
 #SBATCH --qos=normal_prio
 #SBATCH -D /home/wzhu/luciola/mito/05_revbayes

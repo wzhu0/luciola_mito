@@ -19,7 +19,7 @@ setOption("scalingDensity", "10")
 NUM_RUNS      = 2
 NUM_MCMC_ITER = 100000
 CLOCK_RATE <- 0.0134 / 1000.0  # insect clock rate
-CLOCK_RATE <- 0.005 / 1000.0   # partition only by codon (Ask Sebastian for more accurate rate)
+# CLOCK_RATE <- 0.005 / 1000.0   # partition only by codon (Ask Sebastian for more accurate rate)
 
 
 ###########################

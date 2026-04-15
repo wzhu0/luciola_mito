@@ -2,7 +2,7 @@
 # Summarise GenBank assembly quality for public mitogenomes
 # Usage: bash 01_assembly/scripts/02b_check_genbank_assembly.sh
 
-WORK_DIR="$HOME/luciola/mito"
+WORK_DIR="$(pwd)"
 ASSEMBLIES_DIR="$WORK_DIR/01_assembly/assemblies"
 SAMPLE_LIST="$WORK_DIR/utils/sample_gb.txt"
 

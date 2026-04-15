@@ -2,7 +2,7 @@
 # Summarise GetOrganelle assembly results for all samples
 # Usage: bash 01_assembly/scripts/02_check_assembly.sh
 
-WORK_DIR="$HOME/luciola/mito"
+WORK_DIR="$(pwd)"
 OUT_DIR="$WORK_DIR/01_assembly/output"
 SAMPLE_LIST="$WORK_DIR/utils/sample_list.txt"
 
@@ -15,6 +15,12 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 
     sample=$(basename "$line")
     log="$OUT_DIR/$sample/get_org.log.txt"
+
+    # check if output directory exists
+    if [[ ! -d "$OUT_DIR/$sample" ]]; then
+        printf "%-45s %-20s %-10s %-10s\n" "$sample" "NOT FOUND" "N/A" "N/A"
+        continue
+    fi
 
     # check if completed
     if ! grep -q "Thank you!" "$log" 2>/dev/null; then

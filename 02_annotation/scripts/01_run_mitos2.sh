@@ -2,7 +2,7 @@
 # Mitogenome annotation with MITOS2
 # Usage: bash 02_annotation/scripts/01_run_mitos2.sh
 
-WORK_DIR="$HOME/luciola/mito"
+WORK_DIR="$(pwd)"
 ASSEMBLY_DIR="$WORK_DIR/01_assembly/assemblies"
 OUT_DIR="$WORK_DIR/02_annotation/output"
 LOG_DIR="$WORK_DIR/logs"

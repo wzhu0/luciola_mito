@@ -2,7 +2,7 @@
 # Submit one SLURM job per sample for mitogenome assembly with GetOrganelle
 # Usage: bash 01_assembly/scripts/run_getOrganelle.sh
 
-WORK_DIR="$HOME/luciola/mito"
+WORK_DIR="$(pwd)"
 READS_DIR="$WORK_DIR/00_raw_reads"
 LOG_DIR="$WORK_DIR/logs"
 OUT_DIR="$WORK_DIR/01_assembly/output"

@@ -2,7 +2,7 @@
 # Collect final assembly FASTAs into 01_assembly/assemblies/
 # Usage: bash 01_assembly/scripts/03_collect_assemblies.sh
 
-WORK_DIR="$HOME/luciola/mito"
+WORK_DIR="$(pwd)"
 OUT_DIR="$WORK_DIR/01_assembly/output"
 FASTA_DIR="$WORK_DIR/01_assembly/assemblies"
 SAMPLE_LIST="$WORK_DIR/utils/sample_list.txt"

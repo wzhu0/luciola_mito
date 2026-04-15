@@ -65,6 +65,16 @@ All samples should show `circular genome` or `1 scaffold(s)` with length ~16,000
 A circular genome is ideal. A scaffold of ~16,000+ bp is typically missing only the control region and is usually fine for downstream analysis.
 Samples marked `INCOMPLETE` need manual inspection.
 
+### Check GenBank assemblies
+
+Public mitogenome sequences from GenBank are added directly to `01_assembly/assemblies/` as `.fasta` files. We can run a quick sanity check on these:
+
+```bash
+bash 01_assembly/scripts/02b_check_genbank_assembly.sh
+```
+
+All samples should have `NSEQS=1` and a length of ~16,000–17,000 bp.
+
 ### Collect assemblies
 
 Once all samples are complete, copy final assemblies to `01_assembly/assemblies/`

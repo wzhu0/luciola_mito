@@ -7,22 +7,13 @@ ASSEMBLY_DIR="$WORK_DIR/01_assembly/assemblies"
 OUT_DIR="$WORK_DIR/02_annotation/output"
 LOG_DIR="$WORK_DIR/logs"
 SLURM_DIR="$WORK_DIR/02_annotation/slurm_scripts"
-SAMPLE_LIST="$WORK_DIR/utils/sample_list.txt"
 REFDIR="$WORK_DIR/utils/mitos2_db"
 REFSEQ="refseq63m"
 
 mkdir -p "$OUT_DIR" "$LOG_DIR" "$SLURM_DIR"
 
-while IFS= read -r line || [[ -n "$line" ]]; do
-    [[ -z "${line// }" ]] && continue
-
-    sample=$(basename "$line")
-    fasta="$ASSEMBLY_DIR/${sample}.fasta"
-
-    if [[ ! -f "$fasta" ]]; then
-        echo "MISSING  $sample — fasta not found, skipping"
-        continue
-    fi
+for fasta in "$ASSEMBLY_DIR"/*.fasta; do
+    sample=$(basename "$fasta" .fasta)
 
     # skip if already completed
     if [[ -d "$OUT_DIR/$sample" ]]; then
@@ -66,7 +57,6 @@ EOF
     echo "Submitting $sample ..."
     sbatch "$slurm_script"
 
-done < "$SAMPLE_LIST"
+done
 
 echo "All MITOS2 jobs submitted."
-

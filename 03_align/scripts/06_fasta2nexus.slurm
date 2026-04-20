@@ -8,8 +8,6 @@
 #SBATCH -D /home/wzhu/luciola/mito
 #SBATCH -J mito_fasta2nex
 
-set -euo pipefail
-
 module load gnu/12
 module load prebin/kry
 

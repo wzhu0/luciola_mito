@@ -3,9 +3,11 @@
 
 # logs
 logs/
+*.log
 
 # output dirs
 **/output/*
+01_assembly/output_rnaseq/
 
 **/slurm_scripts/
 
@@ -20,6 +22,7 @@ utils/filter_nex_samples.py
 utils/32_sample_list.txt
 **/32_data/
 **/89_output/
+tmp/
 
 # unignore
 !04_iqtree/output/luciola_mito.treefile

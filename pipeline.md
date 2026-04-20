@@ -24,6 +24,42 @@ RNAseq reads: `/mnt/netvolumes/srva229/bayes/hpc_exchange/wzhu/data_luciola/RNAS
 Each RNAseq sample has two tissue libraries (head and body) that need to be combined before assembly.
 Assembled using [MITGARD](https://github.com/pedronachtigall/MITGARD) (reference-guided) rather than GetOrganelle, since mitochondrial transcript levels vary greatly across genes. Intergenic regions may be unreliable for RNA-seq assemblies (low/no transcription coverage) and should be treated with caution in downstream analyses.
 
+**GeneBank mitogenome accession numbers**
+25 mitogenomes and 1 Per-gene sample *Luciola singapura* downloaded from GenBank, comprising outgroups and ingroups. Note that *Nipponoluciola cruciata* in Höhna et al. 2025 corresponds to *Luciola cruciata* in Gene Bank (the genus name change Ballantyne et al., 2022).
+
+**Outgroups:** Aquatica (3 sequences) and Nipponoluciola cruciata (6 sequences).
+
+**Excluded:** Luciola_italica (CM142147.1) — excluded due to annotation failure.
+
+| Sample | Accession |
+|--------|-----------|
+| Aquatica_lateralis_1 | LC306678.1 |
+| Aquatica_lateralis_2 | NC_035755.1 |
+| Aquatica_leii | NC_025276.1 |
+| Hotaria_unmunsana | NC_050947.1 |
+| Nipponoluciola_cruciata_1 | NC_022472.1 | 
+| Nipponoluciola_cruciata_2 | LC677170.1 | 
+| Nipponoluciola_cruciata_3 | LC306677.1 | 
+| Nipponoluciola_cruciata_4 | OM718718.1 | 
+| Nipponoluciola_cruciata_5 | OM718717.1 | <- *Nipponoluciola cruciata* in Höhna et al. 2025
+| Nipponoluciola_cruciata_6 | AB849456.1 | 
+| Luciola_curtithorax_1 | NC_038225.1 | 
+| Luciola_curtithorax_2 | MG770613.1 | 
+| Luciola_filiformis_1 | PX289843.1 | 
+| Luciola_filiformis_2 | MW260625.1 | 
+| Luciola_kagiana_1 | OQ184181.2 | 
+| Luciola_kagiana_2 | NC_072664.1 | 
+| Luciola_kagiana_3 | MW260619.1 | 
+| Luciola_parvula_1 | LC677171.1 | 
+| Luciola_parvula_2 | NC_067969.1 | 
+| Luciola_parvula_3 | OL944082.1 | 
+| Luciola_sp_1 | OP747315.1 | 
+| Luciola_sp_2 | OP747314.1 | 
+| Luciola_substriata_1 | NC_027176.1 | 
+| Luciola_substriata_2 | KP313820.1 | 
+| Luciola_unmunsana | MT134039.1 | 
+| Luciola_singapura | Per-gene accessions (MW620428–MW620442): 12S=MW620428, 16S=MW620429, ATP6=MW620430, ATP8=MW620431, COX1=MW620432, COX2=MW620433, COX3=MW620434, CYTB=MW620435, ND1=MW620436, ND2=MW620437, ND3=MW620438, ND4=MW620439, ND4L=MW620440, ND5=MW620441, ND6=MW620442 | 
+
 ---
 
 ## Step 00: Copy raw reads

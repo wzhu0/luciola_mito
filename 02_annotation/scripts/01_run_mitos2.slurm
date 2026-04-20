@@ -1,6 +1,6 @@
 #!/bin/bash
 # Mitogenome annotation with MITOS2
-# Usage: bash 02_annotation/scripts/01_run_mitos2.sh
+# Usage: bash 02_annotation/scripts/01_run_mitos2.slurm
 
 WORK_DIR="$(pwd)"
 ASSEMBLY_DIR="$WORK_DIR/01_assembly/assemblies"

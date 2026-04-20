@@ -1,17 +1,12 @@
 #!/bin/bash
 #SBATCH --partition=krypton
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=16gb
-##SBATCH --time=3-00:00:00
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=32gb
+#SBATCH --time=3-00:00:00
 #SBATCH --output=/home/wzhu/luciola/mito/logs/04_iqtree.out
 #SBATCH --qos=normal_prio
 #SBATCH -D /home/wzhu/luciola/mito
 #SBATCH -J mito_iqtree
-
-# Step 4: Concatenate trimmed alignments and run IQ-TREE
-# Produces an unrooted ML tree with UFBoot support values
-# Run after 03_align/scripts/03_trim.sh is complete
-# Usage: sbatch 04_iqtree/scripts/run_iqtree.slurm
 
 module load gnu/12
 module load prebin/kry
@@ -34,7 +29,6 @@ trim_dir = "${TRIM_DIR}"
 data_dir = "${DATA_DIR}"
 genes    = "${ALL_GENES[*]}".split()
 
-# Read all alignments into dict: gene -> {sample: seq}
 aln = {}
 for gene in genes:
     aln[gene] = {}
@@ -49,54 +43,68 @@ for gene in genes:
             else:
                 aln[gene][name] += line
 
-# Get sample order from first gene
 samples = list(aln[genes[0]].keys())
 
-# Write concatenated FASTA
 with open(os.path.join(data_dir, "concat.fasta"), "w") as out:
     for sample in samples:
         seq = "".join(aln[gene].get(sample, "") for gene in genes)
         out.write(">" + sample + "\n")
         out.write(seq + "\n")
 
-# Report
 first_seq = "".join(aln[gene].get(samples[0], "") for gene in genes)
 print(f"Concatenated: {len(samples)} taxa, {len(first_seq)} sites")
 
-# Write per-gene lengths for partition file
 with open(os.path.join(data_dir, "gene_lengths.txt"), "w") as out:
     for gene in genes:
         seqs = list(aln[gene].values())
         out.write(f"{gene}\t{len(seqs[0])}\n")
 EOF
 
-# Step 2: Write partition file for IQ-TREE 
+# Step 2: Write partition file matching RevBayes 4-partition scheme
+# PCG codon pos 1, 2, 3 pooled across all PCGs; rRNAs concatenated
 PART_FILE="${DATA_DIR}/partitions.txt"
 > "$PART_FILE"
+
+POS1_SITES=""
+POS2_SITES=""
+POS3_SITES=""
+RRNA_SITES=""
 
 POS=1
 while IFS=$'\t' read -r gene len; do
     END=$(( POS + len - 1 ))
 
-    # PCGs: three separate codon position partitions
     if [[ " ${PCG_GENES[*]} " == *" ${gene} "* ]]; then
-        echo "DNA, ${gene}_pos1 = ${POS}-${END}\3"         >> "$PART_FILE"
-        echo "DNA, ${gene}_pos2 = $((POS+1))-${END}\3"     >> "$PART_FILE"
-        echo "DNA, ${gene}_pos3 = $((POS+2))-${END}\3"     >> "$PART_FILE"
+        POS1_SITES="${POS1_SITES:+${POS1_SITES}, }${POS}-${END}\3"
+        POS2_SITES="${POS2_SITES:+${POS2_SITES}, }$((POS+1))-${END}\3"
+        POS3_SITES="${POS3_SITES:+${POS3_SITES}, }$((POS+2))-${END}\3"
     else
-        echo "DNA, ${gene} = ${POS}-${END}"                 >> "$PART_FILE"
+        RRNA_SITES="${RRNA_SITES:+${RRNA_SITES}, }${POS}-${END}"
     fi
 
     POS=$(( END + 1 ))
 done < "${DATA_DIR}/gene_lengths.txt"
 
+echo "DNA, PCG_pos1 = ${POS1_SITES}" >> "$PART_FILE"
+echo "DNA, PCG_pos2 = ${POS2_SITES}" >> "$PART_FILE"
+echo "DNA, PCG_pos3 = ${POS3_SITES}" >> "$PART_FILE"
+echo "DNA, rRNA     = ${RRNA_SITES}" >> "$PART_FILE"
+
+echo "Partition file written: ${PART_FILE}"
+cat "$PART_FILE"
 
 # Step 3: Run IQ-TREE
+# - GTR+G4+I to match RevBayes model
+# - 1000 ultrafast bootstrap replicates
+# - 10 independent tree search runs
+# - model applied per partition
 iqtree2 \
     -s  "${DATA_DIR}/concat.fasta" \
     -p  "${PART_FILE}" \
-    -m  MFP \
+    -m  GTR+G4+I \
     -B  1000 \
+    --runs 10 \
     --redo \
     -T  ${SLURM_CPUS_PER_TASK} \
     --prefix "${OUT_DIR}/luciola_mito"
+

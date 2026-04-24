@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --partition=krypton
 #SBATCH --cpus-per-task=2
-#SBATCH --ntasks=4
-#SBATCH --mem=16gb
+#SBATCH --ntasks=8
+#SBATCH --mem=32gb
 #SBATCH --output=/home/wzhu/luciola/mito/logs/revbayes_timetree.out
 #SBATCH --qos=normal_prio
 #SBATCH -D /home/wzhu/luciola/mito/05_revbayes
@@ -17,7 +17,7 @@ module load prebin/kry
 module load openmpi
 module load boost
 
-NUM_RUNS=2
+NUM_RUNS=4
 NUM_MCMC_ITER=100000
 
 mpirun -np ${SLURM_NTASKS} rb-mpi-dev scripts/mcmc_timetree_mito.Rev ${NUM_RUNS} ${NUM_MCMC_ITER}

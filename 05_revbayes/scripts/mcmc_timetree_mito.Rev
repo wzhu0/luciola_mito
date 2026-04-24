@@ -14,12 +14,10 @@
 setOption("useScaling", "true")
 setOption("scalingDensity", "10")
 
-# NUM_RUNS      = args[1]
-# NUM_MCMC_ITER = args[2]
-NUM_RUNS      = 2
-NUM_MCMC_ITER = 100000
-CLOCK_RATE <- 0.0134 / 1000.0  # insect clock rate
-# CLOCK_RATE <- 0.005 / 1000.0   # partition only by codon (Ask Sebastian for more accurate rate)
+NUM_RUNS      = args[1]
+NUM_MCMC_ITER = args[2]
+# CLOCK_RATE <- 0.0134 / 1000.0  # insect clock rate
+CLOCK_RATE <- 0.00574 / 1000.0   # rate from codon position partition in Hoehna et al. 2025
 
 
 ###########################
@@ -97,5 +95,6 @@ mymcmc.operatorSummary()
 
 trace = readTreeTrace("output/Luciola_mito_timetree.trees", treetype="clock", burnin= 0.2)
 mapTree(trace, file="output/Luciola_mito_timetree_MAP.tree" )
+mccTree(trace, file="output/Luciola_mito_timetree_MCC.tree" )
 
 q()

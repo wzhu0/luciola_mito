@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --partition=krypton
+#SBATCH --partition=lemmium
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=32gb
 #SBATCH --time=3-00:00:00
@@ -9,7 +9,7 @@
 #SBATCH -J mito_iqtree
 
 module load gnu/12
-module load prebin/kry
+module load prebin/lem
 
 TRIM_DIR="03_align/03_trimmed"
 DATA_DIR="04_iqtree/data"

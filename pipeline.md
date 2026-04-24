@@ -15,7 +15,8 @@ Phylogenetic inference of *Luciola* fireflies from whole mitogenomes across 12 p
 
 ## Sample information
 
-We have 122 DNAseq samples and 12 RNAseq samples (ItCol population), plus 25 downloaded GenBank mitogenomes and 1 Luciola singapura with only 15 genes from GenBank.
+We have 122 DNAseq samples and 12 RNAseq samples (ItCol population), plus 23 downloaded GenBank mitogenomes (used to be 25 but 2 were excluded due to ambiguous identification) and 1 *Luciola singapura* with per-gene accessions from GenBank. 
+Total: 158 samples after exclusions.
 
 DNAseq reads: `/mnt/netvolumes/srva229/bayes/hpc_exchange/shared/data_luciola/{2020,2022,2025}/`
 RNAseq reads: `/mnt/netvolumes/srva229/bayes/hpc_exchange/wzhu/data_luciola/RNASeq/`
@@ -25,12 +26,10 @@ Each RNAseq sample has two tissue libraries (head and body) that need to be comb
 Assembled using [MITGARD](https://github.com/pedronachtigall/MITGARD) (reference-guided) rather than GetOrganelle, since mitochondrial transcript levels vary greatly across genes. Intergenic regions may be unreliable for RNA-seq assemblies (low/no transcription coverage) and should be treated with caution in downstream analyses.
 
 **GeneBank mitogenome accession numbers**
-25 mitogenomes and 1 Per-gene sample *Luciola singapura* downloaded from GenBank, comprising outgroups and ingroups. Note that *Nipponoluciola cruciata* in Höhna et al. 2025 corresponds to *Luciola cruciata* in Gene Bank (the genus name change Ballantyne et al., 2022).
 
-**Outgroups:** Aquatica (3 sequences) and Nipponoluciola cruciata (6 sequences).
+25 mitogenomes and 1 Per-gene sample *Luciola singapura* downloaded from GenBank, comprising outgroups and ingroups. Note that *Nipponoluciola cruciata* corresponds to *Luciola cruciata* in Gene Bank (the genus name change Ballantyne et al., 2022). Similarly, *Luciola substriata* was transferred to *Sclerotia substriata* by Ballantyne et al., 2016.
 
-**Excluded:** Luciola_italica (CM142147.1) — excluded due to annotation failure.
-
+**Outgroups:** Aquatica (3 sequences), *Nipponoluciola cruciata* (6 sequences), and *Sclerotia substriata* (2 sequences).
 | Sample | Accession |
 |--------|-----------|
 | Aquatica_lateralis_1 | LC306678.1 |
@@ -41,24 +40,32 @@ Assembled using [MITGARD](https://github.com/pedronachtigall/MITGARD) (reference
 | Nipponoluciola_cruciata_2 | LC677170.1 | 
 | Nipponoluciola_cruciata_3 | LC306677.1 | 
 | Nipponoluciola_cruciata_4 | OM718718.1 | 
-| Nipponoluciola_cruciata_5 | OM718717.1 | <- *Nipponoluciola cruciata* in Höhna et al. 2025
+| Nipponoluciola_cruciata_5 | OM718717.1 | 
 | Nipponoluciola_cruciata_6 | AB849456.1 | 
 | Luciola_curtithorax_1 | NC_038225.1 | 
 | Luciola_curtithorax_2 | MG770613.1 | 
-| Luciola_filiformis_1 | PX289843.1 | 
-| Luciola_filiformis_2 | MW260625.1 | 
+| Luciola_filiformis | PX289843.1 | 
 | Luciola_kagiana_1 | OQ184181.2 | 
 | Luciola_kagiana_2 | NC_072664.1 | 
-| Luciola_kagiana_3 | MW260619.1 | 
 | Luciola_parvula_1 | LC677171.1 | 
 | Luciola_parvula_2 | NC_067969.1 | 
 | Luciola_parvula_3 | OL944082.1 | 
 | Luciola_sp_1 | OP747315.1 | 
 | Luciola_sp_2 | OP747314.1 | 
-| Luciola_substriata_1 | NC_027176.1 | 
-| Luciola_substriata_2 | KP313820.1 | 
+| Sclerotia_substriata_1 | NC_027176.1 | 
+| Sclerotia_substriata_2 | KP313820.1 | 
 | Luciola_unmunsana | MT134039.1 | 
+
 | Luciola_singapura | Per-gene accessions (MW620428–MW620442): 12S=MW620428, 16S=MW620429, ATP6=MW620430, ATP8=MW620431, COX1=MW620432, COX2=MW620433, COX3=MW620434, CYTB=MW620435, ND1=MW620436, ND2=MW620437, ND3=MW620438, ND4=MW620439, ND4L=MW620440, ND5=MW620441, ND6=MW620442 | 
+
+
+**Excluded samples:**
+
+| Sample | Accession | Reason |
+|--------|-----------|--------|
+| Luciola_italica | CM142147.1 | annotation failure |
+| Luciola_kagiana_3 | MW260619.1 | UNVERIFIED status in GenBank |
+| Luciola_filiformis_2 | MW260625.1 | UNVERIFIED status in GenBank |
 
 ---
 
@@ -124,7 +131,6 @@ bash 01_assembly/scripts/02_check_genebank_assembly.sh
 All samples should have `NSEQS=1` and a length of ~16,000–17,000 bp.
 
 ### Collect assemblies
-
 Once all samples are complete, copy final assemblies to `01_assembly/assemblies/`
 
 ```bash
@@ -237,13 +243,21 @@ sbatch 03_align/scripts/05_trim.slurm
 
 **rRNAs:** trimmed with `trimAl -gt 0.3`, removing columns where more than 70% of sequences have a gap.
 
+### 05b: Add missing rrnS for SwLa-22
+
+```bash
+bash 03_align/scripts/05b_add_missing_rrnS.sh
+```
+
+SwLa-LuSpp-22-f-2020_pooled_101 has no rrnS due to incomplete assembly. This script appends the sample to the trimmed rrnS alignment as an all `?` sequence of the correct alignment length. 
+
 ### 06: Convert to NEXUS (for RevBayes)
 
 ```bash
 sbatch 03_align/scripts/06_fasta2nexus.slurm
 ```
 
-Converts trimmed FASTA alignments to NEXUS format and writes them to `05_revbayes/data/`. 
+Converts trimmed FASTA alignments to NEXUS format and writes them to `05_revbayes/data/`.
 
 ---
 
@@ -257,7 +271,7 @@ sbatch 04_iqtree/scripts/run_iqtree.slurm
 
 1. **Concatenation:** all 15 trimmed gene alignments are concatenated into a single FASTA (`04_iqtree/data/concat.fasta`)
 
-2. **Partition file:** written to `04_iqtree/data/partitions.txt`. PCG codon positions are pooled across all 13 genes into 3 partitions (pos1, pos2, pos3); rrnS and rrnL are combined into a single rRNA partition, matching the RevBayes model.
+2. **Partition file:** written to `04_iqtree/data/partitions.txt`. PCG codon positions are pooled across all 13 genes into 3 partitions (pos1, pos2, pos3); rrnS and rrnL are combined into a single rRNA partition. Total: 4 partitions, matching the RevBayes model structure.
 
 3. **IQ-TREE run:** GTR+G4+I model applied independently per partition. Ultrafast bootstrap (`-B 1000`) with 10 independent tree search runs (`--runs 10`) to reduce dependence on starting tree.
 
@@ -274,7 +288,7 @@ The key file is `04_iqtree/output/luciola_mito.treefile`.
 sbatch 05_revbayes/scripts/run_revbayes_timetree.slurm
 ```
 
-Partitioned GTR+G4+I model with 4 independent site categories: PCG codon positions 1, 2, 3, and rRNA. Strict clock.
+Partitioned GTR+G4+I model with 4 independent site categories: PCG codon positions 1, 2, 3, and rRNA. Each partition has its own GTR exchangeability rates, stationary frequencies, gamma shape parameter, and proportion of invariable sites. Strict clock with clock rate from Hoehna et al., 2025.
 
 ---
 

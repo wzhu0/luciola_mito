@@ -25,7 +25,6 @@ utils/32_sample_list.txt
 tmp/
 
 # unignore
-!04_iqtree/output/luciola_mito.treefile
 
 history.txt
 

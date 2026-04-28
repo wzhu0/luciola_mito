@@ -12,7 +12,8 @@ GrPa	8C7DBE
 ItCol	EDDACE
 AlVe	C23175
 MoDo	C23175
-Aquatica	FF0000
-Nipponoluciola	FF0000
+Aquatica	000000
+Nipponoluciola	000000
+Sclerotia	000000
 Hotaria	000000
 Luciola	000000

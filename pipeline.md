@@ -35,7 +35,7 @@ Assembled using [MITGARD](https://github.com/pedronachtigall/MITGARD) (reference
 | Aquatica_lateralis_1 | LC306678.1 |
 | Aquatica_lateralis_2 | NC_035755.1 |
 | Aquatica_leii | NC_025276.1 |
-| Hotaria_unmunsana | NC_050947.1 |
+| Luciola_unmunsana_2 | NC_050947.1 |
 | Nipponoluciola_cruciata_1 | NC_022472.1 | 
 | Nipponoluciola_cruciata_2 | LC677170.1 | 
 | Nipponoluciola_cruciata_3 | LC306677.1 | 
@@ -54,7 +54,7 @@ Assembled using [MITGARD](https://github.com/pedronachtigall/MITGARD) (reference
 | Luciola_sp_2 | OP747314.1 | 
 | Sclerotia_substriata_1 | NC_027176.1 | 
 | Sclerotia_substriata_2 | KP313820.1 | 
-| Luciola_unmunsana | MT134039.1 | 
+| Luciola_unmunsana_1 | MT134039.1 | 
 
 | Luciola_singapura | Per-gene accessions (MW620428–MW620442): 12S=MW620428, 16S=MW620429, ATP6=MW620430, ATP8=MW620431, COX1=MW620432, COX2=MW620433, COX3=MW620434, CYTB=MW620435, ND1=MW620436, ND2=MW620437, ND3=MW620438, ND4=MW620439, ND4L=MW620440, ND5=MW620441, ND6=MW620442 | 
 
@@ -290,8 +290,67 @@ sbatch 05_revbayes/scripts/run_revbayes_timetree.slurm
 
 Partitioned GTR+G4+I model with 4 independent site categories: PCG codon positions 1, 2, 3, and rRNA. Each partition has its own GTR exchangeability rates, stationary frequencies, gamma shape parameter, and proportion of invariable sites. Strict clock with clock rate from Hoehna et al., 2025.
 
+### Output
+ 
+MCMC trace files and the MCC tree are written to `05_revbayes/output/`. Convergence should be checked before proceeding.
+
+**Future work**
+
+1. Mitocondrial intergenic regions could be added as a fifth partition to increase phylogenetic signal, particularly for population-level relationships where PCGs may be too conservative. However, this could be tricky as 1. gene order might differ among species; 2. RNA-seq samples don't have eliable intergenic assembly.
+2. Relaxed clock for RevBayes time tree inference
+
+### Visualising the MCC tree
+ 
+After the MCMC run is complete, download the MCC tree from the cluster and plot it locally.
+
+**1. Download the MCC tree**
+ 
+```bash
+scp palmuc1:/home/wzhu/luciola/mito/05_revbayes/output/Luciola_mito_timetree_MCC.tree 05_revbayes/output/
+```
+ 
+**2. Substitute tip names**
+ 
+Raw RevBayes output uses internal sample codes. Run the rename script to replace them with neat, human-readable names before plotting. The mapping is defined in `utils/rename_map.txt`.
+ 
+```bash
+bash utils/apply_rename.sh 05_revbayes/output/Luciola_mito_timetree_MCC.tree
+```
+ 
+**3. Plot the tree**
+ 
+Produces an A4 PDF with population colour coding, 95% HPD age bars, alternating time bar background, and a geological timescale. Output goes to `05_revbayes/plots/`.
+ 
+```bash
+Rscript 05_revbayes/scripts/plot_rb_tree.R Luciola_mito_timetree_MCC.tree
+```
+
 ---
 
-## Future work
+## Step 06: Species delimitation (mPTP)
+ 
+mPTP (multi-rate Poisson Tree Processes) infers species boundaries directly from a rooted ultrametric tree by fitting separate Poisson processes to within-species and between-species branching events. We use the RevBayes MCC tree as input.
+ 
+### Installation
+ 
+```bash
+cd ~/software
+git clone https://github.com/Pas-Kapli/mptp.git
+cd mptp
+./autogen.sh
+./configure --prefix=$HOME/software/mptp
+make
+make install
+```
 
-Intergenic regions could be added as a fifth partition to increase phylogenetic signal, particularly for population-level relationships where PCGs may be too conservative. However, this could be tricky as 1. gene order might differ among species; 2. RNA-seq samples don't have eliable intergenic assembly.
+Add to PATH in `~/.bashrc`:
+
+```bash
+echo 'export PATH="$HOME/software/mptp/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+mptp --version
+```
+ 
+### Run mPTP
+
+---

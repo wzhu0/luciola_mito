@@ -14,9 +14,9 @@
 setOption("useScaling", "true")
 setOption("scalingDensity", "10")
 
-NUM_RUNS      = args[1]
-NUM_MCMC_ITER = args[2]
-# CLOCK_RATE <- 0.0134 / 1000.0  # insect clock rate
+NUM_RUNS      = 4
+NUM_MCMC_ITER = 100000
+
 CLOCK_RATE <- 0.00574 / 1000.0   # rate from codon position partition in Hoehna et al. 2025
 
 

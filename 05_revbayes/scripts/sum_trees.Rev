@@ -1,0 +1,20 @@
+# trace_1 = readTreeTrace("Luciola_mito_timetree_run_1.trees", treetype="clock", burnin= 0.2)
+# mccTree(trace_1, file="Luciola_mito_timetree_MCC_run_1.tree" )
+# mapTree(trace_1, file="Luciola_mito_timetree_MAP_run_1.tree" )
+
+# trace_2 = readTreeTrace("Luciola_mito_timetree_run_2.trees", treetype="clock", burnin= 0.2)
+# mccTree(trace_2, file="Luciola_mito_timetree_MCC_run_2.tree" )
+# mapTree(trace_2, file="Luciola_mito_timetree_MAP_run_2.tree" )
+
+# trace_3 = readTreeTrace("Luciola_mito_timetree_run_3.trees", treetype="clock", burnin= 0.2)
+# mccTree(trace_3, file="Luciola_mito_timetree_MCC_run_3.tree" )
+# mapTree(trace_3, file="Luciola_mito_timetree_MAP_run_3.tree" )
+
+# trace_4 = readTreeTrace("Luciola_mito_timetree_run_4.trees", treetype="clock", burnin= 0.2)
+# mccTree(trace_4, file="Luciola_mito_timetree_MCC_run_4.tree" )
+# mapTree(trace_4, file="Luciola_mito_timetree_MAP_run_4.tree" )
+
+trace = readTreeTrace("Luciola_mito_timetree.trees", treetype="clock", burnin= 0.2)
+# mccTree(trace, file="Luciola_mito_timetree_MCC.tree" )
+mapTree(trace, file="Luciola_mito_timetree_MAP.tree" )
+

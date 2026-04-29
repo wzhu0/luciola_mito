@@ -7,6 +7,7 @@ logs/
 
 # output dirs
 **/output/*
+**/plots/*
 01_assembly/output_rnaseq/
 
 **/slurm_scripts/

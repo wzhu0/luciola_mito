@@ -11,7 +11,8 @@ Phylogenetic inference of *Luciola* fireflies from whole mitogenomes across 12 p
 | 02 | `02_annotation/` | Gene annotation (MITOS2) |
 | 03 | `03_align/` | Gene extraction, alignment (MACSE/MAFFT), trimming (trimAl) |
 | 04 | `04_iqtree/` | Concatenated and partitioned ML tree (IQ-TREE) |
-| 05 | `05_revbayes/` | Time-calibrated Bayesian inference (RevBayes) |
+| 05 | `05_revbayes/` | Bayesian tree inference (RevBayes) |
+| 06 | `06_mptp/` | Species delimitation (mPTP) |
 
 ## Sample information
 
@@ -282,48 +283,66 @@ The key file is `04_iqtree/output/luciola_mito.treefile`.
 
 ---
 
-## Step 05: Time-calibrated phylogeny (RevBayes)
+## Step 05: Bayesian phylogenetic inference (RevBayes)
 
+We run three separate RevBayes analyses, all using the same partitioned GTR+Gamma+I model (4 partitions: PCG codon positions 1, 2, 3, and rRNA). Each partition has its own GTR exchangeability rates, stationary frequencies, gamma shape parameter, and proportion of invariable sites.
+
+| Analysis | Script | Output |
+|----------|--------|--------|
+| Time-calibrated tree | `run_revbayes_timetree.slurm` | Branch lengths in absolute time units (strict clock, rate from Hoehna et al. 2025) |
+| Unrooted non-clock tree | `run_revbayes_unrooted_non-clock.slurm` | Branch lengths in substitutions per site, unrooted |
+| Rooted non-clock tree | `run_revbayes_rooted_non-clock.slurm` | Branch lengths in substitutions per site, rooted on outgroup |
+
+The unrooted and rooted non-clock trees are needed for mPTP species delimitation, which requires branch lengths in substitutions per site. The rooted version uses an outgroup constraint (one representative each from *Aquatica*, *Nipponoluciola*, and *Sclerotia*) 
 ```bash
 sbatch 05_revbayes/scripts/run_revbayes_timetree.slurm
+sbatch 05_revbayes/scripts/run_revbayes_unrooted_non-clock.slurm
+sbatch 05_revbayes/scripts/run_revbayes_rooted_non-clock.slurm
 ```
 
-Partitioned GTR+G4+I model with 4 independent site categories: PCG codon positions 1, 2, 3, and rRNA. Each partition has its own GTR exchangeability rates, stationary frequencies, gamma shape parameter, and proportion of invariable sites. Strict clock with clock rate from Hoehna et al., 2025.
-
-### Output
+### Output and convergence
  
-MCMC trace files and the MCC tree are written to `05_revbayes/output/`. Convergence should be checked before proceeding.
+MCMC trace files and the MCC trees are written to `05_revbayes/output/`. Convergence should be checked before proceeding.
 
-**Future work**
+**Future work for timetree analysis**
 
 1. Mitocondrial intergenic regions could be added as a fifth partition to increase phylogenetic signal, particularly for population-level relationships where PCGs may be too conservative. However, this could be tricky as 1. gene order might differ among species; 2. RNA-seq samples don't have eliable intergenic assembly.
 2. Relaxed clock for RevBayes time tree inference
 
-### Visualising the MCC tree
+### Post-process and visualization
  
-After the MCMC run is complete, download the MCC tree from the cluster and plot it locally.
+After the MCMC runs are complete and convergence have been achieved, post process the outputs, download the MCC tree from the cluster and plot it locally.
 
-**1. Download the MCC tree**
- 
-```bash
-scp palmuc1:/home/wzhu/luciola/mito/05_revbayes/output/Luciola_mito_timetree_MCC.tree 05_revbayes/output/
+
 ```
  
-**2. Substitute tip names**
+### Tip name substitution
  
 Raw RevBayes output uses internal sample codes. Run the rename script to replace them with neat, human-readable names before plotting. The mapping is defined in `utils/rename_map.txt`.
  
 ```bash
 bash utils/apply_rename.sh 05_revbayes/output/Luciola_mito_timetree_MCC.tree
+bash utils/apply_rename.sh 05_revbayes/output/Luciola_mito_unrooted_non-clock_MCC.tree
+bash utils/apply_rename.sh 05_revbayes/output/Luciola_mito_rooted_non-clock_MCC.tree
 ```
+
+### Download MCC trees
  
-**3. Plot the tree**
- 
+```bash
+scp palmuc1:/home/wzhu/luciola/mito/05_revbayes/output/Luciola_mito_timetree_MCC.tree  05_revbayes/output/
+scp palmuc1:/home/wzhu/luciola/mito/05_revbayes/output/Luciola_mito_unrooted_non-clock_MCC.tree  05_revbayes/output/
+scp palmuc1:/home/wzhu/luciola/mito/05_revbayes/output/Luciola_mito_rooted_non-clock_MCC.tree    05_revbayes/output/
+
+### Visualisation
+**Timetree**
 Produces an A4 PDF with population colour coding, 95% HPD age bars, alternating time bar background, and a geological timescale. Output goes to `05_revbayes/plots/`.
  
 ```bash
 Rscript 05_revbayes/scripts/plot_rb_tree.R Luciola_mito_timetree_MCC.tree
 ```
+
+**Unrooted and rooted non-clock trees**
+First visualizing them in FigTree.
 
 ---
 
@@ -352,5 +371,5 @@ mptp --version
 ```
  
 ### Run mPTP
-
+mPTP requires a rooted tree with branch lengths in substitutions per site.
 ---

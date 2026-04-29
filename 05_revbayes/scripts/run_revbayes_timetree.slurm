@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --partition=lemmium
+#SBATCH --partition=krypton
 #SBATCH --cpus-per-task=2
 #SBATCH --ntasks=8
 #SBATCH --mem=32gb
@@ -13,8 +13,8 @@
 
 
 module load gnu/12
-module load prebin/lem
+module load prebin/kry
 module load openmpi
 module load boost
 
-mpirun -np ${SLURM_NTASKS} rb-mpi-dev scripts/mcmc_timetree_mito.Rev
+mpirun -np ${SLURM_NTASKS} rb-mpi-dev scripts/mcmc_timetree.Rev

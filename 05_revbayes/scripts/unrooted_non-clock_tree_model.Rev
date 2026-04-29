@@ -1,0 +1,18 @@
+################################################################################
+#
+# RevBayes Script: unrooted, non-clock tree using uniform tree prior
+#
+#
+# authors: Wenjie Zhu
+#
+################################################################################
+
+##############
+# Tree model #
+##############
+
+phylogeny ~ dnUniformTopologyBranchLength(taxa, branchLengthDistribution=dnExponential(10.0))
+moves.append( mvNNI(phylogeny,                  weight=num_taxa/2) )
+moves.append( mvSPR(phylogeny,                  weight=num_taxa/2) )
+moves.append( mvSubtreeSwap(phylogeny,          weight=num_taxa/3) )
+moves.append( mvBranchLengthScale(phylogeny,    weight=num_taxa/3) )

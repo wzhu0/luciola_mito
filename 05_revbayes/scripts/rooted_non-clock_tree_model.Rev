@@ -1,0 +1,28 @@
+################################################################################
+#
+# RevBayes Script: rooted, non-clock tree using uniform tree prior
+#
+#
+# authors: Wenjie Zhu
+#
+################################################################################
+
+##############
+# Tree model #
+##############
+# Define outgroup
+out_group = clade(
+    "Aquatica_lateralis_1",
+    "Nipponoluciola_cruciata_1",
+    "Sclerotia_substriata_1"
+)
+
+phylogeny ~ dnUniformTopologyBranchLength(
+    taxa, 
+    outgroup = out_group,
+    branchLengthDistribution=dnExponential(10.0)
+)
+moves.append( mvNNI(phylogeny,                  weight=num_taxa/2) )
+moves.append( mvSPR(phylogeny,                  weight=num_taxa/2) )
+moves.append( mvSubtreeSwap(phylogeny,          weight=num_taxa/3) )
+moves.append( mvBranchLengthScale(phylogeny,    weight=num_taxa/3) )

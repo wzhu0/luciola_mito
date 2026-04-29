@@ -57,6 +57,7 @@ for ( i in 1:data.size() ) {
 # Get some useful variables from the data. We need these later on.
 num_taxa  <- data[1].ntaxa()
 taxa      <- data[1].taxa()
+num_branches <- 2 * num_taxa - 3
 NUM_PARTS = data.size()
 
 "Partitions : " + NUM_PARTS

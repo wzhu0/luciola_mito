@@ -1,0 +1,87 @@
+################################################################################
+#
+# RevBayes Script: Unrooted non-clock tree inference from
+#                  mitochondrial genomes (15 genes).
+#
+# Partition : 4 (by codon position and gene type)
+# Tree prior: Uniform topology with exponential branch lengths
+#
+# authors: Wenjie Zhu, Sebastian Hoehna
+#
+################################################################################
+
+setOption("useScaling", "true")
+setOption("scalingDensity", "10")
+
+NUM_RUNS      = 4
+NUM_MCMC_ITER = 100000
+
+
+###########################
+#  Read data              #
+###########################
+
+source("scripts/read_data_mito.Rev")
+
+moves    = VectorMoves()
+monitors = VectorMonitors()
+
+
+
+######################
+# Substitution Model #
+######################
+
+source("scripts/substitution_model_mito.Rev")
+
+
+##############
+# Tree model #
+##############
+
+source("scripts/unrooted_non-clock_tree_model.Rev")
+
+
+###################
+# PhyloCTMC Model #
+###################
+
+for ( i in 1:NUM_PARTS ) {
+
+    sequences[i] ~ dnPhyloCTMC(
+        tree        = phylogeny,
+        Q           = Q[i],
+        siteRates   = sr[i],
+        pInv        = p_inv[i],
+        type        = "DNA"
+    )
+    sequences[i].clamp( data[i] )
+
+}
+
+
+############
+# Analysis #
+############
+
+
+mymodel = model(phylogeny)
+
+# monitors
+monitors.append( mnScreen(printgen=100) )
+monitors.append( mnModel(filename = "output/Luciola_mito_unrooted_non-clock.log", printgen = 10))
+monitors.append( mnFile(phylogeny, filename = "output/Luciola_mito_unrooted_non-clock.trees", printgen = 10))
+
+# run the MCMC
+mymcmc = mcmc(mymodel, moves, monitors, nruns=NUM_RUNS, combine="mixed")
+mymcmc.run(generations=NUM_MCMC_ITER, tuningInterval=100)
+
+mymcmc.operatorSummary()
+
+# computing the maximum a posteriori tree
+
+trace = readTreeTrace("output/Luciola_mito_unrooted_non-clock.trees", treetype="non-clock", burnin= 0.2)
+mapTree(trace, file="output/Luciola_mito_unrooted_non-clock_MAP.tree" )
+mccTree(trace, file="output/Luciola_mito_unrooted_non-clock_MCC.tree" )
+
+q()

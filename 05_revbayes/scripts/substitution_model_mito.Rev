@@ -34,7 +34,7 @@ for ( i in 1:NUM_PARTS ) {
   # Among Site Rate Variation #
   #############################
 
-  # among site rate variation, +Gamma4
+  # +Gamma4
   alpha[i] ~ dnUniform( 0, 1E6 )
   alpha[i].setValue( 1.0 )
   sr[i] := fnDiscretizeGamma( alpha[i], alpha[i], 4, false )
@@ -45,7 +45,7 @@ for ( i in 1:NUM_PARTS ) {
   # Proportion of invariable sites #
   ##################################
 
-  # among site rate variation, +Gamma4
+  # +I
   p_inv[i] ~ dnBeta( 1, 1 )
   moves.append( mvBetaProbability(p_inv[i], offset=1.0, weight=2.0) )
 

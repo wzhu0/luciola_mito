@@ -300,9 +300,35 @@ sbatch 05_revbayes/scripts/run_revbayes_unrooted_non-clock.slurm
 sbatch 05_revbayes/scripts/run_revbayes_rooted_non-clock.slurm
 ```
 
+### Summarise posterior trees
+Due to memory limitations of the MPI RevBayes, tree summarisation is run separately after the MCMC completes. The `sum_trees.slurm` script reads the posterior tree samples and computes the MCC and MAP trees.
+
+```bash
+sbatch --dependency=afterany:<mcmc_job_id> 05_revbayes/scripts/sum_trees.slurm Luciola_mito_timetree
+sbatch --dependency=afterany:<mcmc_job_id> 05_revbayes/scripts/sum_trees.slurm Luciola_mito_unrooted_non-clock
+sbatch --dependency=afterany:<mcmc_job_id> 05_revbayes/scripts/sum_trees.slurm Luciola_mito_rooted_non-clock
+```
+
 ### Output and convergence
  
-MCMC trace files and the MCC trees are written to `05_revbayes/output/`. Convergence should be checked before proceeding.
+MCMC trace files and the MCC trees are written to `05_revbayes/output/`. Convergence assessment with `convenience` before proceeding.
+
+```bash
+PREFIX=Luciola_mito_unrooted_non-clock
+sbatch --job-name=conv_${PREFIX} \
+       --output=/home/wzhu/luciola/mito/logs/convergence_${PREFIX}.out \
+       05_revbayes/scripts/assess_convergence.slurm ${PREFIX}
+
+PREFIX=Luciola_mito_rooted_non-clock
+sbatch --job-name=conv_${PREFIX} \
+       --output=/home/wzhu/luciola/mito/logs/convergence_${PREFIX}.out \
+       05_revbayes/scripts/assess_convergence.slurm ${PREFIX}
+
+PREFIX=Luciola_mito_timetree
+sbatch --job-name=conv_${PREFIX} \
+       --output=/home/wzhu/luciola/mito/logs/convergence_${PREFIX}.out \
+       05_revbayes/scripts/assess_convergence.slurm ${PREFIX}
+```
 
 **Future work for timetree analysis**
 

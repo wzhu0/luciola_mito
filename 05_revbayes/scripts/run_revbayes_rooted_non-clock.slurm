@@ -17,4 +17,7 @@ module load prebin/kry
 module load openmpi
 module load boost
 
-mpirun -np ${SLURM_NTASKS} rb-mpi-dev scripts/mcmc_rooted_non-clock.Rev
+NUM_RUNS=4
+NUM_MCMC_ITER=100000
+
+mpirun -np ${SLURM_NTASKS} rb-mpi-dev scripts/mcmc_rooted_non-clock.Rev --args ${NUM_RUNS} ${NUM_MCMC_ITER}

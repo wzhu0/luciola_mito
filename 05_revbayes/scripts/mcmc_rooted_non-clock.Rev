@@ -13,8 +13,8 @@
 setOption("useScaling", "true")
 setOption("scalingDensity", "10")
 
-NUM_RUNS      = 4
-NUM_MCMC_ITER = 100000
+NUM_RUNS      = args[1]
+NUM_MCMC_ITER = args[2]
 
 
 ###########################

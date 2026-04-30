@@ -1,8 +1,7 @@
 #!/bin/bash
-#SBATCH --partition=lemmium
-#SBATCH --cpus-per-task=2
-#SBATCH --ntasks=1
-#SBATCH --mem=64gb
+#SBATCH --partition=krypton
+#SBATCH --ntasks=2
+#SBATCH --mem=32gb
 #SBATCH --output=/home/wzhu/luciola/mito/logs/revbayes_sum_trees.out
 #SBATCH --qos=normal_prio
 #SBATCH -D /home/wzhu/luciola/mito/05_revbayes/output
@@ -13,6 +12,8 @@
 
 
 module load gnu/12
-module load prebin/lem
+module load prebin/kry
+module load openmpi
+module load boost
 
-rb-dev /home/wzhu/luciola/mito/05_revbayes/scripts/sum_trees.Rev
+rb-dev /home/wzhu/luciola/mito/05_revbayes/scripts/sum_trees.Rev --args ${1}

@@ -21,9 +21,8 @@ utils/finished.txt
 utils/todo_list.txt
 utils/filter_nex_samples.py
 utils/32_sample_list.txt
-**/32_data/
-**/89_output/
 tmp/
+06_mptp/data/*fasta
 
 # unignore
 

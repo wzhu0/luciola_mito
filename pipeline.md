@@ -28,7 +28,7 @@ Assembled using [MITGARD](https://github.com/pedronachtigall/MITGARD) (reference
 
 **GeneBank mitogenome accession numbers**
 
-25 mitogenomes and 1 Per-gene sample *Luciola singapura* downloaded from GenBank, comprising outgroups and ingroups. Note that *Nipponoluciola cruciata* corresponds to *Luciola cruciata* in Gene Bank (the genus name change Ballantyne et al., 2022). Similarly, *Luciola substriata* was transferred to *Sclerotia substriata* by Ballantyne et al., 2016.
+25 mitogenomes and 1 Per-gene sample *Luciola singapura* downloaded from GenBank, comprising outgroups and ingroups. Note that *Nipponoluciola cruciata* corresponds to *Luciola cruciata* in GenBank (the genus name change Ballantyne et al., 2022). Similarly, *Luciola substriata* was transferred to *Sclerotia substriata* by Ballantyne et al., 2016.
 
 **Outgroups:** Aquatica (3 sequences), *Nipponoluciola cruciata* (6 sequences), and *Sclerotia substriata* (2 sequences).
 | Sample | Accession |
@@ -304,9 +304,9 @@ sbatch 05_revbayes/scripts/run_revbayes_rooted_non-clock.slurm
 Due to memory limitations of the MPI RevBayes, tree summarisation is run separately after the MCMC completes. The `sum_trees.slurm` script reads the posterior tree samples and computes the MCC and MAP trees.
 
 ```bash
-sbatch --dependency=afterany:<mcmc_job_id> 05_revbayes/scripts/sum_trees.slurm Luciola_mito_timetree
-sbatch --dependency=afterany:<mcmc_job_id> 05_revbayes/scripts/sum_trees.slurm Luciola_mito_unrooted_non-clock
-sbatch --dependency=afterany:<mcmc_job_id> 05_revbayes/scripts/sum_trees.slurm Luciola_mito_rooted_non-clock
+sbatch --dependency=afterany:<mcmc_job_id> 05_revbayes/scripts/sum_trees.slurm Luciola_mito_timetree clock
+sbatch --dependency=afterany:<mcmc_job_id> 05_revbayes/scripts/sum_trees.slurm Luciola_mito_unrooted_non-clock non-clock
+sbatch --dependency=afterany:<mcmc_job_id> 05_revbayes/scripts/sum_trees.slurm Luciola_mito_rooted_non-clock non-clock
 ```
 
 ### Output and convergence
@@ -330,10 +330,16 @@ sbatch --job-name=conv_${PREFIX} \
        05_revbayes/scripts/assess_convergence.slurm ${PREFIX}
 ```
 
-**Future work for timetree analysis**
 
-1. Mitocondrial intergenic regions could be added as a fifth partition to increase phylogenetic signal, particularly for population-level relationships where PCGs may be too conservative. However, this could be tricky as 1. gene order might differ among species; 2. RNA-seq samples don't have eliable intergenic assembly.
-2. Relaxed clock for RevBayes time tree inference
+
+### Notes on topology discordance
+
+The strict clock timetree and the unrooted non-clock tree show different topologies, particularly in the placement of *Luciola filiformis* and the relationships among European populations. This is likely due to the strict clock constraint forcing a uniform rate across all branches.
+
+**Future work for timetree analysis**
+- **a.** Constrain the topology from the non-clock tree and run divergence time estimation on that fixed topology
+- **b.** Subsample one individual per population and run a relaxed clock analysis
+
 
 ### Post-process and visualization
  
@@ -352,12 +358,25 @@ bash utils/apply_rename.sh 05_revbayes/output/Luciola_mito_unrooted_non-clock_MC
 bash utils/apply_rename.sh 05_revbayes/output/Luciola_mito_rooted_non-clock_MCC.tree
 ```
 
+```bash
+for f in 05_revbayes/output/Luciola_mito_unrooted_non-clock_MCMC150000*.tree; do
+    bash utils/apply_rename.sh "$f"
+done
+
+cd 05_revbayes/output
+tar czvf nonclock.tar.gz Luciola_mito_unrooted_non-clock_MCMC150000*.tree
+```
+
 ### Download MCC trees
  
 ```bash
 scp palmuc1:/home/wzhu/luciola/mito/05_revbayes/output/Luciola_mito_timetree_MCC.tree  05_revbayes/output/
 scp palmuc1:/home/wzhu/luciola/mito/05_revbayes/output/Luciola_mito_unrooted_non-clock_MCC.tree  05_revbayes/output/
 scp palmuc1:/home/wzhu/luciola/mito/05_revbayes/output/Luciola_mito_rooted_non-clock_MCC.tree    05_revbayes/output/
+
+scp palmuc1:/home/wzhu/luciola/mito/05_revbayes/output/nonclock.tar.gz 05_revbayes/output/
+tar xzvf nonclock.tar.gz
+```
 
 ### Visualisation
 **Timetree**
@@ -368,14 +387,17 @@ Rscript 05_revbayes/scripts/plot_rb_tree.R Luciola_mito_timetree_MCC.tree
 ```
 
 **Unrooted and rooted non-clock trees**
+
 First visualizing them in FigTree.
 
 ---
 
 ## Step 06: Species delimitation (mPTP)
  
-mPTP (multi-rate Poisson Tree Processes) infers species boundaries directly from a rooted ultrametric tree by fitting separate Poisson processes to within-species and between-species branching events. We use the RevBayes MCC tree as input.
- 
+mPTP (multi-rate Poisson Tree Processes) infers species boundaries directly from a rooted ultrametric tree by fitting separate Poisson processes to within-species and between-species branching events. We use the RevBayes unrooted non-clock MCC tree as input, rerooted using the outgroup.
+
+Two analyses are run: one on the full tree (all samples including GenBank ones) and one on the field-only tree (GenBank tips dropped).
+
 ### Installation
  
 ```bash
@@ -395,7 +417,72 @@ echo 'export PATH="$HOME/software/mptp/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
 mptp --version
 ```
- 
+
+### Preprocess tree
+
+Convert the MCC tree from NEXUS to Newick, reroot using the outgroup list, and generate two versions (full tree and field-only without GenBank samples):
+
+```bash
+sbatch 06_mptp/scripts/01_preprocess_tree.slurm
+```
+
+Output files are written to `06_mptp/data/`
+
+### Prepare input files
+
+```bash
+# copy concatenated alignment and apply tip name substitutions
+cp 04_iqtree/data/concat.fasta 06_mptp/data/concat_full.fasta
+bash utils/apply_rename.sh 06_mptp/data/concat_full.fasta
+
+# create field-only alignment (samples with hyphens in name only)
+python3 << 'EOF'
+fa_in  = "06_mptp/data/concat_full.fasta"
+fa_out = "06_mptp/data/concat_field_only.fasta"
+seqs = {}
+order = []
+name = None
+with open(fa_in) as f:
+    for line in f:
+        line = line.rstrip()
+        if line.startswith(">"):
+            name = line[1:]
+            order.append(name)
+            seqs[name] = ""
+        else:
+            seqs[name] += line
+with open(fa_out, "w") as out:
+    for n in order:
+        if "-" in n:
+            out.write(f">{n}\n{seqs[n]}\n")
+kept = sum(1 for n in order if "-" in n)
+print(f"Written {kept} field samples to {fa_out}")
+EOF
+```
+### Detect minimum branch length
+
+
+```bash
+sbatch 06_mptp/scripts/02_detect_minbr.slurm
+```
+
+Check `06_mptp/output/mptp_minbr.out` for the detected values. For this dataset both full and field-only alignments give `--minbr 0.000253`.
+
 ### Run mPTP
 mPTP requires a rooted tree with branch lengths in substitutions per site.
+
+Runs ML and MCMC analyses on both trees in parallel. Minimum branch length is set explicitly from the detection step above.
+
+```bash
+sbatch 06_mptp/scripts/03_run_mptp.slurm
+```
+
+| Task | Analysis | Tree |
+|------|----------|------|
+| 1 | ML | full |
+| 2 | ML | field-only |
+| 3 | MCMC (50M steps, 10 runs, 20% burnin) | full |
+| 4 | MCMC (50M steps, 10 runs, 20% burnin) | field-only |
+
+Each task produces a `.txt` delimitation file and an `.svg` visualization. In the SVG: black branches = speciation events (species boundaries); red = within-species coalescent branches.
 ---

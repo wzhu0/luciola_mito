@@ -18,7 +18,6 @@ library(convenience)
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) == 0) stop("Please provide a filename prefix")
 prefix <- args[1]
-#prefix <- "Luciola_mito_timetree"
 log_dir <- "05_revbayes/output"
 
 log_files  <- paste0(log_dir, "/", prefix, "_run_", 1:4, ".log")

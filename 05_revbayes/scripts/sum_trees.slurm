@@ -8,7 +8,7 @@
 #SBATCH -J sum_rb_trees
 
 # RevBayes tree posterior summary
-# Usage: sbatch sbatch 05_revbayes/scripts/sum_trees.slurm Luciola_mito_unrooted_non-clock_MCMC150000
+# Usage: sbatch 05_revbayes/scripts/sum_trees.slurm Luciola_mito_unrooted_non-clock_MCMC150000 non-clock
 
 
 module load gnu/12
@@ -16,4 +16,4 @@ module load prebin/kry
 module load openmpi
 module load boost
 
-rb-dev /home/wzhu/luciola/mito/05_revbayes/scripts/sum_trees.Rev --args ${1}
+rb-dev /home/wzhu/luciola/mito/05_revbayes/scripts/sum_trees.Rev --args ${1} ${2}

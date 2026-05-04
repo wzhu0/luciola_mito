@@ -8,27 +8,27 @@
 ################################################################################
 
 PREFIX           <- args[1]
+CLOCK            <- args[2]
 
-trace_1 = readTreeTrace(PREFIX + "_run_1.trees", treetype="clock", burnin= 0.2)
+trace_1 = readTreeTrace(PREFIX + "_run_1.trees", treetype=CLOCK, burnin= 0.2)
 mccTree(trace_1, file=PREFIX + "_MCC_run_1.tree" )
 mapTree(trace_1, file=PREFIX + "_MAP_run_1.tree" )
 
-trace_2 = readTreeTrace(PREFIX + "_run_2.trees", treetype="clock", burnin= 0.2)
+trace_2 = readTreeTrace(PREFIX + "_run_2.trees", treetype=CLOCK, burnin= 0.2)
 mccTree(trace_2, file=PREFIX + "_MCC_run_2.tree" )
 mapTree(trace_2, file=PREFIX + "_MAP_run_2.tree" )
 
-trace_3 = readTreeTrace(PREFIX + "_run_3.trees", treetype="clock", burnin= 0.2)
+trace_3 = readTreeTrace(PREFIX + "_run_3.trees", treetype=CLOCK, burnin= 0.2)
 mccTree(trace_3, file=PREFIX + "_MCC_run_3.tree" )
 mapTree(trace_3, file=PREFIX + "_MAP_run_3.tree" )
 
-trace_4 = readTreeTrace(PREFIX + "_run_4.trees", treetype="clock", burnin= 0.2)
+trace_4 = readTreeTrace(PREFIX + "_run_4.trees", treetype=CLOCK, burnin= 0.2)
 mccTree(trace_4, file=PREFIX + "_MCC_run_4.tree" )
 mapTree(trace_4, file=PREFIX + "_MAP_run_4.tree" )
 
-trace = readTreeTrace(PREFIX + ".trees", treetype="clock", burnin= 0.2)
+trace = readTreeTrace(PREFIX + ".trees", treetype=CLOCK, burnin= 0.2)
 mccTree(trace, file=PREFIX + "_MCC.tree" )
 mapTree(trace, file=PREFIX + "_MAP.tree" )
 
 q()
-
 

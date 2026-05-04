@@ -69,8 +69,8 @@ mymodel = model(phylogeny)
 
 # monitors
 monitors.append( mnScreen(printgen=100) )
-monitors.append( mnModel(filename = "output/Luciola_mito_rooted_nonclock.log", printgen = 10))
-monitors.append( mnFile(phylogeny, filename = "output/Luciola_mito_rooted_nonclock.trees", printgen = 10))
+monitors.append( mnModel(filename = "output/Luciola_mito_rooted_non-clock.log", printgen = 10))
+monitors.append( mnFile(phylogeny, filename = "output/Luciola_mito_rooted_non-clock.trees", printgen = 10))
 
 # run the MCMC
 mymcmc = mcmc(mymodel, moves, monitors, nruns=NUM_RUNS, combine="mixed")
@@ -80,8 +80,8 @@ mymcmc.operatorSummary()
 
 # computing the maximum a posteriori tree
 
-trace = readTreeTrace("output/Luciola_mito_rooted_nonclock.trees", treetype="non-clock", burnin= 0.2)
-mapTree(trace, file="output/Luciola_mito_rooted_nonclock_MAP.tree" )
-mccTree(trace, file="output/Luciola_mito_rooted_nonclock_MCC.tree" )
+trace = readTreeTrace("output/Luciola_mito_rooted_non-clock.trees", treetype="non-clock", burnin= 0.2)
+mapTree(trace, file="output/Luciola_mito_rooted_non-clock_MAP.tree" )
+mccTree(trace, file="output/Luciola_mito_rooted_non-clock_MCC.tree" )
 
 q()

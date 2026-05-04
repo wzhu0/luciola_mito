@@ -1,14 +1,14 @@
 #!/bin/bash
 #SBATCH --partition=krypton
 #SBATCH --ntasks=2
-#SBATCH --mem=32gb
-#SBATCH --output=/home/wzhu/luciola/mito/logs/revbayes_sum_trees.out
+#SBATCH --mem=64gb
+#SBATCH --output=/home/wzhu/luciola/mito/logs/sum_rb_trees.out
 #SBATCH --qos=normal_prio
 #SBATCH -D /home/wzhu/luciola/mito/05_revbayes/output
-#SBATCH -J mito_revbayes_sum_tree
+#SBATCH -J sum_rb_trees
 
 # RevBayes tree posterior summary
-# Usage: sbatch 05_revbayes/output/sum_trees.Rev
+# Usage: sbatch sbatch 05_revbayes/scripts/sum_trees.slurm Luciola_mito_unrooted_non-clock_MCMC150000
 
 
 module load gnu/12
